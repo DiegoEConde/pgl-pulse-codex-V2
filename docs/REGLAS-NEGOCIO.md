@@ -13,6 +13,7 @@ Fecha: 2026-09-29
 6. Los importes historicos no se recalculan si despues cambia un precio, comision, cotizacion o dato maestro.
 7. Administrador, vendedor y repartidor tienen accesos distintos.
 8. La documentacion de estados y casos borde completa estas reglas y debe revisarse antes de disenar tablas.
+9. Retiro de proveedor, recepcion en oficina, entrega al cliente, cobro y rendicion son eventos independientes aunque puedan ocurrir en la misma ruta.
 
 ## Ventas
 
@@ -29,6 +30,7 @@ Fecha: 2026-09-29
 11. En pagos parciales debe poder indicarse que producto o unidad se esta pagando.
 12. No se permite entrega parcial de una venta con varios productos.
 13. Una venta sin stock queda confirmada, pero no cerrada, y debe generar alerta.
+14. Una venta puede quedar entregada con saldo pendiente.
 
 ## Stock
 
