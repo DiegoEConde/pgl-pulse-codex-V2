@@ -1,0 +1,105 @@
+erDiagram
+  usuario_perfil ||--o{ venta : crea
+  usuario_perfil ||--o{ auditoria_evento : registra
+
+  categoria ||--o{ producto : agrupa
+  producto ||--o{ producto_caracteristica : define
+  producto ||--o{ unidad : instancia
+  producto ||--o{ venta_item : vendido
+  producto ||--o{ compra_item : comprado
+
+  cliente ||--o{ venta : compra
+  proveedor ||--o{ compra : provee
+  vendedor ||--o{ venta : vende
+  repartidor ||--o{ ruta : realiza
+
+  venta ||--o{ venta_item : contiene
+  venta ||--o{ comprobante : emite
+  venta_item ||--o| unidad : asigna
+  venta_item ||--o{ movimiento_aplicacion : recibe_pago
+
+  compra ||--o{ compra_item : contiene
+  compra_item ||--o| unidad : origina
+  compra_item ||--o{ movimiento_aplicacion : recibe_pago
+  compra_item }o--o| venta_item : abastece
+
+  unidad ||--o{ unidad_evento : historial
+  unidad ||--o{ garantia : garantia
+
+  ruta ||--o{ ruta_parada : tiene
+  ruta_parada ||--o{ ruta_tarea : contiene
+  ruta_tarea }o--o| compra_item : retira
+  ruta_tarea }o--o| venta_item : entrega
+  ruta_tarea }o--o| unidad : mueve
+  ruta ||--o{ ruta_rendicion : rinde
+  ruta_rendicion ||--o{ ruta_rendicion_item : detalla
+
+  caja ||--o{ movimiento_dinero : registra
+  movimiento_dinero ||--o{ movimiento_aplicacion : aplica
+  movimiento_dinero }o--o| ruta : pertenece
+  movimiento_dinero }o--o| cliente : cliente
+  movimiento_dinero }o--o| proveedor : proveedor
+  movimiento_dinero }o--o| repartidor : repartidor
+
+  comprobante ||--o{ comprobante_item : imprime
+  comprobante_item }o--|| venta_item : snapshot
+
+  garantia ||--o{ garantia_evento : historial
+  cotizacion ||--o{ movimiento_dinero : valua
+
+  usuario_perfil {
+    uuid id
+    uuid auth_user_id
+    text rol
+  }
+  producto {
+    uuid id
+    uuid categoria_id
+    text marca
+    text modelo
+  }
+  venta {
+    uuid id
+    bigint numero
+    text estado
+  }
+  venta_item {
+    uuid id
+    uuid venta_id
+    uuid producto_id
+    text estado
+  }
+  compra {
+    uuid id
+    uuid proveedor_id
+    text estado
+  }
+  compra_item {
+    uuid id
+    uuid compra_id
+    uuid producto_id
+    text estado
+  }
+  unidad {
+    uuid id
+    uuid producto_id
+    text estado
+    text imei
+  }
+  ruta {
+    uuid id
+    uuid repartidor_id
+    text estado
+  }
+  movimiento_dinero {
+    uuid id
+    uuid caja_id
+    text tipo
+    text moneda
+    numeric importe
+  }
+  comprobante {
+    uuid id
+    bigint numero
+    text estado
+  }

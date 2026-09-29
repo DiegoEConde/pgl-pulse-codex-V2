@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "docs:pdf": "node scripts/generar-boceto-pdf.mjs",
     "test": "node -e \"console.log('Pendiente: definir pruebas v2')\""
   },
   "dependencies": {

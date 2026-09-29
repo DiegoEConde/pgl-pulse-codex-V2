@@ -11,6 +11,14 @@ PGL Pulse v1/beta estaba centrado en la unidad fisica. PGL Pulse v2 se redefine 
 3. `REGLAS-NEGOCIO.md`: reglas que el sistema no debe romper.
 4. `FLUJOS-OPERATIVOS.md`: pasos reales de trabajo que deben soportar las pantallas.
 5. `ESTADOS-Y-CASOS-BORDE.md`: roles, estados implicitos, caja, comprobantes, cancelaciones, rendiciones y decisiones finas.
+6. `ESTADOS.md`: boceto de estados persistentes y derivados.
+7. `BASE-DATOS.md`: boceto de tablas, relaciones y fuentes de verdad.
+
+## Entregables de revision
+
+- `PGL-Pulse-v2-boceto-estados-base.pdf`: PDF de revision con estados, tablas y diagrama conceptual.
+- `diagramas/base-datos-v2.mmd`: diagrama Mermaid editable.
+- `diagramas/base-datos-v2.svg`: diagrama visual exportable.
 
 Si una implementacion entra en conflicto con estos documentos, se corrige la implementacion o se actualiza primero la regla oficial. No se inventan reglas desde el codigo.
 

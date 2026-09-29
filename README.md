@@ -15,6 +15,12 @@ La documentacion oficial inicial esta en `docs/`:
 - `REGLAS-NEGOCIO.md`
 - `FLUJOS-OPERATIVOS.md`
 - `ESTADOS-Y-CASOS-BORDE.md`
+- `ESTADOS.md`
+- `BASE-DATOS.md`
+
+Entregable de revision:
+
+- `docs/PGL-Pulse-v2-boceto-estados-base.pdf`
 
 ## Principio de trabajo
 

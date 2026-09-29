@@ -26,6 +26,8 @@ La fuente de verdad inicial esta en:
 - `docs/REGLAS-NEGOCIO.md`
 - `docs/FLUJOS-OPERATIVOS.md`
 - `docs/ESTADOS-Y-CASOS-BORDE.md`
+- `docs/ESTADOS.md`
+- `docs/BASE-DATOS.md`
 
 Antes de crear migraciones, cambiar tablas o adaptar pantallas, verificar que la decision este contemplada en esos documentos.
 
@@ -63,7 +65,7 @@ La autenticacion y las politicas de acceso deben disenarse antes de produccion.
 
 Scaffold local inicial creado a partir del frontend existente. Pendiente:
 
-- definir `BASE-DATOS.md`;
+- revisar y aprobar `BASE-DATOS.md`;
 - crear migraciones v2;
 - ajustar contrato de datos;
 - adaptar pantallas;

@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1050" viewBox="0 0 1500 1050">
+  <style>
+    .title{font-family:Arial,sans-serif;font-size:28px;font-weight:700;fill:#18212f}
+    .group{font-family:Arial,sans-serif;font-size:18px;font-weight:700;fill:#18212f}
+    .box{fill:#ffffff;stroke:#56667a;stroke-width:2;rx:8}
+    .core{fill:#eef6ff;stroke:#3b76b7}
+    .money{fill:#fff7e8;stroke:#bf812d}
+    .route{fill:#f0f8ed;stroke:#4e8b45}
+    .doc{fill:#f6efff;stroke:#7b57b8}
+    .audit{fill:#f6f6f6;stroke:#777}
+    .text{font-family:Arial,sans-serif;font-size:15px;fill:#1e293b}
+    .small{font-family:Arial,sans-serif;font-size:12px;fill:#475569}
+    .line{stroke:#64748b;stroke-width:2;fill:none;marker-end:url(#arrow)}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <text x="40" y="45" class="title">PGL Pulse v2 - Boceto de base de datos</text>
+  <text x="40" y="72" class="small">Diagrama conceptual: no es SQL final. Las flechas muestran dependencias principales.</text>
+
+  <text x="60" y="120" class="group">Catalogos y terceros</text>
+  <rect x="60" y="140" width="190" height="70" class="box core"/><text x="80" y="168" class="text">categoria</text><text x="80" y="190" class="small">nombre</text>
+  <rect x="300" y="140" width="190" height="70" class="box core"/><text x="320" y="168" class="text">producto</text><text x="320" y="190" class="small">marca, modelo</text>
+  <rect x="540" y="140" width="210" height="70" class="box core"/><text x="560" y="168" class="text">producto_caracteristica</text><text x="560" y="190" class="small">clave, valores</text>
+  <rect x="60" y="245" width="170" height="65" class="box core"/><text x="80" y="273" class="text">cliente</text>
+  <rect x="260" y="245" width="170" height="65" class="box core"/><text x="280" y="273" class="text">proveedor</text>
+  <rect x="460" y="245" width="170" height="65" class="box core"/><text x="480" y="273" class="text">vendedor</text>
+  <rect x="660" y="245" width="170" height="65" class="box core"/><text x="680" y="273" class="text">repartidor</text>
+
+  <text x="60" y="370" class="group">Ventas, compras y unidades</text>
+  <rect x="60" y="395" width="190" height="75" class="box"/><text x="80" y="423" class="text">venta</text><text x="80" y="445" class="small">cliente, vendedor, estado</text>
+  <rect x="310" y="395" width="190" height="75" class="box"/><text x="330" y="423" class="text">venta_item</text><text x="330" y="445" class="small">producto, unidad, estado</text>
+  <rect x="60" y="520" width="190" height="75" class="box"/><text x="80" y="548" class="text">compra</text><text x="80" y="570" class="small">proveedor, estado</text>
+  <rect x="310" y="520" width="190" height="75" class="box"/><text x="330" y="548" class="text">compra_item</text><text x="330" y="570" class="small">producto, venta_item</text>
+  <rect x="570" y="455" width="190" height="85" class="box"/><text x="590" y="483" class="text">unidad</text><text x="590" y="505" class="small">estado fisico, IMEI</text><text x="590" y="523" class="small">ubicacion</text>
+  <rect x="810" y="455" width="190" height="75" class="box audit"/><text x="830" y="483" class="text">unidad_evento</text><text x="830" y="505" class="small">historial fisico/IMEI</text>
+
+  <text x="900" y="120" class="group">Rutas y repartidores</text>
+  <rect x="900" y="140" width="180" height="70" class="box route"/><text x="920" y="168" class="text">ruta</text><text x="920" y="190" class="small">repartidor, estado</text>
+  <rect x="1120" y="140" width="180" height="70" class="box route"/><text x="1140" y="168" class="text">ruta_parada</text><text x="1140" y="190" class="small">proveedor/cliente</text>
+  <rect x="1120" y="250" width="180" height="80" class="box route"/><text x="1140" y="278" class="text">ruta_tarea</text><text x="1140" y="300" class="small">retirar, entregar, cobrar</text>
+  <rect x="900" y="250" width="180" height="80" class="box route"/><text x="920" y="278" class="text">ruta_rendicion</text><text x="920" y="300" class="small">esperado/devuelto</text>
+  <rect x="900" y="360" width="210" height="70" class="box route"/><text x="920" y="388" class="text">ruta_rendicion_item</text><text x="920" y="410" class="small">tareas y movimientos</text>
+
+  <text x="60" y="680" class="group">Caja, pagos y comprobantes</text>
+  <rect x="60" y="705" width="170" height="70" class="box money"/><text x="80" y="733" class="text">caja</text><text x="80" y="755" class="small">general inicial</text>
+  <rect x="270" y="705" width="210" height="80" class="box money"/><text x="290" y="733" class="text">movimiento_dinero</text><text x="290" y="755" class="small">cobro, pago, rendicion</text>
+  <rect x="530" y="705" width="210" height="80" class="box money"/><text x="550" y="733" class="text">movimiento_aplicacion</text><text x="550" y="755" class="small">aplica a venta/compra item</text>
+  <rect x="790" y="705" width="170" height="70" class="box money"/><text x="810" y="733" class="text">cotizacion</text><text x="810" y="755" class="small">USD/ARS historico</text>
+  <rect x="60" y="840" width="190" height="75" class="box doc"/><text x="80" y="868" class="text">comprobante</text><text x="80" y="890" class="small">numero unico, estado</text>
+  <rect x="300" y="840" width="190" height="75" class="box doc"/><text x="320" y="868" class="text">comprobante_item</text><text x="320" y="890" class="small">snapshot impreso</text>
+
+  <text x="900" y="520" class="group">Garantia y auditoria</text>
+  <rect x="900" y="545" width="180" height="75" class="box audit"/><text x="920" y="573" class="text">garantia</text><text x="920" y="595" class="small">unidad, venta_item</text>
+  <rect x="1120" y="545" width="180" height="75" class="box audit"/><text x="1140" y="573" class="text">garantia_evento</text><text x="1140" y="595" class="small">historial</text>
+  <rect x="900" y="665" width="210" height="75" class="box audit"/><text x="920" y="693" class="text">auditoria_evento</text><text x="920" y="715" class="small">acciones sensibles</text>
+
+  <path d="M250 175 L300 175" class="line"/>
+  <path d="M490 175 L540 175" class="line"/>
+  <path d="M230 278 L60 395" class="line"/>
+  <path d="M430 278 L60 520" class="line"/>
+  <path d="M630 278 L60 395" class="line"/>
+  <path d="M830 278 L900 175" class="line"/>
+  <path d="M250 432 L310 432" class="line"/>
+  <path d="M500 432 L570 485" class="line"/>
+  <path d="M250 558 L310 558" class="line"/>
+  <path d="M500 558 L570 505" class="line"/>
+  <path d="M500 520 L310 470" class="line"/>
+  <path d="M760 498 L810 498" class="line"/>
+  <path d="M1080 175 L1120 175" class="line"/>
+  <path d="M1210 210 L1210 250" class="line"/>
+  <path d="M1120 290 L760 498" class="line"/>
+  <path d="M1120 290 L500 432" class="line"/>
+  <path d="M990 330 L990 360" class="line"/>
+  <path d="M230 740 L270 740" class="line"/>
+  <path d="M480 745 L530 745" class="line"/>
+  <path d="M740 745 L790 745" class="line"/>
+  <path d="M250 878 L300 878" class="line"/>
+  <path d="M390 840 L390 470" class="line"/>
+  <path d="M1080 582 L1120 582" class="line"/>
+  <path d="M900 582 L760 510" class="line"/>
+</svg>
