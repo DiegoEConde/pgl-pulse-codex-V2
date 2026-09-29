@@ -1,105 +1,138 @@
 erDiagram
-  usuario_perfil ||--o{ venta : crea
-  usuario_perfil ||--o{ auditoria_evento : registra
+  usuarios ||--o{ ventas : vende
+  usuarios ||--o{ compras : retira
+  usuarios ||--o{ rutas : realiza
+  usuarios ||--o{ movimientos_dinero : registra
+  usuarios ||--o{ historial_eventos : audita
 
-  categoria ||--o{ producto : agrupa
-  producto ||--o{ producto_caracteristica : define
-  producto ||--o{ unidad : instancia
-  producto ||--o{ venta_item : vendido
-  producto ||--o{ compra_item : comprado
+  clientes ||--o{ ventas : compra
+  clientes ||--o{ movimientos_dinero : paga
+  proveedores ||--o{ compras : provee
+  proveedores ||--o{ movimientos_dinero : cobra
 
-  cliente ||--o{ venta : compra
-  proveedor ||--o{ compra : provee
-  vendedor ||--o{ venta : vende
-  repartidor ||--o{ ruta : realiza
+  productos ||--o{ venta_items : vendido
+  productos ||--o{ compra_items : pedido
+  productos ||--o{ unidades : instancia
 
-  venta ||--o{ venta_item : contiene
-  venta ||--o{ comprobante : emite
-  venta_item ||--o| unidad : asigna
-  venta_item ||--o{ movimiento_aplicacion : recibe_pago
+  ventas ||--o{ venta_items : contiene
+  compras ||--o{ compra_items : contiene
+  compra_items }o--o| venta_items : abastece
+  compra_items }o--o| unidades : origina
+  venta_items }o--o| unidades : asigna
 
-  compra ||--o{ compra_item : contiene
-  compra_item ||--o| unidad : origina
-  compra_item ||--o{ movimiento_aplicacion : recibe_pago
-  compra_item }o--o| venta_item : abastece
+  rutas ||--o{ ruta_items : contiene
+  ruta_items }o--o| compra_items : retira
+  ruta_items }o--o| venta_items : entrega
+  ruta_items }o--o| unidades : mueve
 
-  unidad ||--o{ unidad_evento : historial
-  unidad ||--o{ garantia : garantia
+  movimientos_dinero }o--o| ventas : cobra
+  movimientos_dinero }o--o| venta_items : aplica_cobro
+  movimientos_dinero }o--o| compras : paga
+  movimientos_dinero }o--o| compra_items : aplica_pago
+  movimientos_dinero }o--o| rutas : rinde
+  movimientos_dinero }o--o| ruta_items : liquida
 
-  ruta ||--o{ ruta_parada : tiene
-  ruta_parada ||--o{ ruta_tarea : contiene
-  ruta_tarea }o--o| compra_item : retira
-  ruta_tarea }o--o| venta_item : entrega
-  ruta_tarea }o--o| unidad : mueve
-  ruta ||--o{ ruta_rendicion : rinde
-  ruta_rendicion ||--o{ ruta_rendicion_item : detalla
+  unidades ||--o{ historial_eventos : historial
+  ventas ||--o{ historial_eventos : cambios
+  compras ||--o{ historial_eventos : cambios
+  movimientos_dinero ||--o{ historial_eventos : cambios
 
-  caja ||--o{ movimiento_dinero : registra
-  movimiento_dinero ||--o{ movimiento_aplicacion : aplica
-  movimiento_dinero }o--o| ruta : pertenece
-  movimiento_dinero }o--o| cliente : cliente
-  movimiento_dinero }o--o| proveedor : proveedor
-  movimiento_dinero }o--o| repartidor : repartidor
-
-  comprobante ||--o{ comprobante_item : imprime
-  comprobante_item }o--|| venta_item : snapshot
-
-  garantia ||--o{ garantia_evento : historial
-  cotizacion ||--o{ movimiento_dinero : valua
-
-  usuario_perfil {
+  usuarios {
     uuid id
     uuid auth_user_id
     text rol
+    numeric porcentaje_comision
+    numeric costo_envio_usd
+    numeric costo_envio_ars
   }
-  producto {
+  clientes {
     uuid id
-    uuid categoria_id
+    text nombre
+    text telefono
+    text direccion
+  }
+  proveedores {
+    uuid id
+    text nombre
+    text telefono
+    text direccion
+  }
+  productos {
+    uuid id
+    text categoria
     text marca
     text modelo
+    jsonb atributos
   }
-  venta {
+  ventas {
     uuid id
     bigint numero
+    uuid cliente_id
+    uuid vendedor_id
     text estado
+    bigint comprobante_numero
+    jsonb comprobante_snapshot
   }
-  venta_item {
+  venta_items {
     uuid id
     uuid venta_id
     uuid producto_id
+    uuid unidad_id
+    uuid compra_item_id
     text estado
+    numeric precio_venta
   }
-  compra {
+  compras {
     uuid id
+    bigint numero
     uuid proveedor_id
+    uuid repartidor_retiro_id
     text estado
   }
-  compra_item {
+  compra_items {
     uuid id
     uuid compra_id
     uuid producto_id
+    uuid venta_item_id
+    uuid unidad_id
     text estado
+    numeric costo_original
   }
-  unidad {
+  unidades {
     uuid id
     uuid producto_id
     text estado
     text imei
+    text ubicacion_tipo
   }
-  ruta {
+  rutas {
     uuid id
     uuid repartidor_id
     text estado
+    timestamptz fecha_programada
   }
-  movimiento_dinero {
+  ruta_items {
     uuid id
-    uuid caja_id
+    uuid ruta_id
     text tipo
-    text moneda
-    numeric importe
-  }
-  comprobante {
-    uuid id
-    bigint numero
+    text destino_tipo
+    numeric importe_esperado
     text estado
+  }
+  movimientos_dinero {
+    uuid id
+    text tipo
+    text signo
+    text moneda
+    text medio_pago
+    numeric importe
+    text cierre_codigo
+  }
+  historial_eventos {
+    uuid id
+    text entidad
+    uuid entidad_id
+    text tipo
+    jsonb antes
+    jsonb despues
   }

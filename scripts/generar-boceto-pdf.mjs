@@ -26,10 +26,10 @@ function addPageIfNeeded(height = 40) {
   }
 }
 
-function text(value, size = 10, style = "normal", color = [30, 41, 59]) {
+function write(value, size = 10, style = "normal") {
   doc.setFont("helvetica", style);
   doc.setFontSize(size);
-  doc.setTextColor(...color);
+  doc.setTextColor(30, 41, 59);
   const lines = doc.splitTextToSize(value, page.w - page.margin * 2);
   addPageIfNeeded(lines.length * (size + 4));
   doc.text(lines, page.margin, y);
@@ -40,29 +40,29 @@ function title(value) {
   addPageIfNeeded(44);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
-  doc.setTextColor(24, 33, 47);
+  doc.setTextColor(15, 23, 42);
   doc.text(value, page.margin, y);
   y += 30;
 }
 
 function h2(value) {
-  addPageIfNeeded(36);
+  addPageIfNeeded(34);
   y += 8;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(14);
-  doc.setTextColor(24, 33, 47);
+  doc.setTextColor(15, 23, 42);
   doc.text(value, page.margin, y);
   y += 20;
 }
 
 function bullets(items) {
-  for (const item of items) text("- " + item, 10);
+  for (const item of items) write("- " + item, 10);
   y += 4;
 }
 
 function table(headers, rows, widths) {
   const x0 = page.margin;
-  const rowH = 24;
+  const rowH = 28;
   addPageIfNeeded(rowH * (rows.length + 2));
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
@@ -70,7 +70,7 @@ function table(headers, rows, widths) {
   doc.rect(x0, y, widths.reduce((a, b) => a + b, 0), rowH, "F");
   let x = x0;
   headers.forEach((header, index) => {
-    doc.text(header, x + 6, y + 16);
+    doc.text(header, x + 6, y + 17);
     x += widths[index];
   });
   y += rowH;
@@ -89,14 +89,16 @@ function table(headers, rows, widths) {
   y += 12;
 }
 
-function drawBox(x, yBox, w, h, label, fill = [255, 255, 255]) {
-  doc.setDrawColor(86, 102, 122);
+function box(x, yBox, w, h, label, detail, fill = [255, 255, 255]) {
+  doc.setDrawColor(71, 85, 105);
   doc.setFillColor(...fill);
-  doc.roundedRect(x, yBox, w, h, 5, 5, "FD");
+  doc.roundedRect(x, yBox, w, h, 6, 6, "FD");
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
-  doc.setTextColor(24, 33, 47);
-  doc.text(label, x + 8, yBox + 18);
+  doc.text(label, x + 8, yBox + 17);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7.5);
+  doc.text(doc.splitTextToSize(detail, w - 16).slice(0, 2), x + 8, yBox + 31);
 }
 
 function line(x1, y1, x2, y2) {
@@ -104,142 +106,129 @@ function line(x1, y1, x2, y2) {
   doc.line(x1, y1, x2, y2);
 }
 
-title("PGL Pulse v2 - Boceto de estados y base de datos");
-text("Documento de revision generado desde la documentacion v2. No es una migracion SQL final. Sirve para validar reglas, estados, tablas y relaciones antes de implementar.", 11);
+title("PGL Pulse v2 - Base simplificada y estados");
+write("Documento de revision generado desde la documentacion v2. No es una migracion SQL final. Sirve para validar reglas, estados, tablas y relaciones antes de implementar localmente.", 11);
 
 h2("Reglas que guian el diseno");
 bullets([
-  "La venta es la entidad principal.",
+  "La base local nueva es el punto de partida.",
+  "La venta es la entidad comercial principal.",
+  "Clientes y proveedores quedan en tablas separadas.",
+  "Vendedores y repartidores son usuarios con rol.",
   "Todos los productos se manejan por unidad.",
-  "Retiro, recepcion, entrega, cobro y rendicion son eventos independientes.",
-  "Una venta sin stock solo puede crearse si existe un pedido al proveedor con ese dispositivo.",
-  "Caja real se basa en movimientos de dinero.",
-  "Los pagos parciales pueden aplicarse a una unidad/producto concreto.",
-  "El comprobante es unico y puede reimprimirse con estado pagado.",
-  "Los datos actuales de beta no se migran como datos reales."
+  "Garantia es un estado de la unidad.",
+  "El comprobante vive como numero y snapshot dentro de la venta.",
+  "Caja real se calcula desde movimientos de dinero.",
+  "No se migran datos beta como datos reales."
 ]);
 
-h2("Estados principales");
-table(
-  ["Entidad", "Estados propuestos"],
-  [
-    ["venta", "BORRADOR, CONFIRMADA, FINALIZADA, CANCELADA"],
-    ["venta_item", "PENDIENTE_ABASTECIMIENTO, RESERVADO_OFICINA, ASIGNADO_RUTA, EN_PODER_REPARTIDOR, ENTREGADO, FINALIZADO, CANCELADO, GARANTIA"],
-    ["compra", "BORRADOR, PEDIDA, EN_RETIRO, RECIBIDA_PARCIAL, RECIBIDA_TOTAL, CERRADA, CANCELADA"],
-    ["compra_item", "PEDIDO, ASIGNADO_RUTA, RETIRADO_PROVEEDOR, EN_PODER_REPARTIDOR, RECIBIDO_OFICINA, ENTREGADO_DIRECTO, CANCELADO"],
-    ["unidad", "ESPERADA_PROVEEDOR, EN_PODER_REPARTIDOR, EN_OFICINA_DISPONIBLE, EN_OFICINA_RESERVADA, ENTREGADA, FINALIZADA, GARANTIA, CANCELADA"],
-    ["ruta", "BORRADOR, PROGRAMADA, EN_CURSO, ABIERTA_CON_PENDIENTES, PARCIALMENTE_RENDIDA, RENDIDA, CANCELADA"],
-    ["comprobante", "EMITIDO, PAGADO, EDITADO, ANULADO reservado"],
-    ["rendicion", "ABIERTA, PARCIAL, CERRADA_OK, CERRADA_CON_DIFERENCIA"]
-  ],
-  [110, 400]
-);
-
-h2("Tablas propuestas");
+h2("Tablas oficiales iniciales");
 table(
   ["Area", "Tablas"],
   [
-    ["Seguridad", "usuario_perfil"],
-    ["Catalogos", "categoria, producto, producto_caracteristica"],
-    ["Terceros", "cliente, proveedor, vendedor, repartidor"],
-    ["Ventas", "venta, venta_item"],
-    ["Compras", "compra, compra_item"],
-    ["Stock", "unidad, unidad_evento"],
-    ["Rutas", "ruta, ruta_parada, ruta_tarea"],
-    ["Caja", "caja, movimiento_dinero, movimiento_aplicacion, cotizacion"],
-    ["Comprobantes", "comprobante, comprobante_item"],
-    ["Rendiciones", "ruta_rendicion, ruta_rendicion_item"],
-    ["Garantia", "garantia, garantia_evento"],
-    ["Auditoria", "auditoria_evento"]
+    ["Usuarios", "usuarios"],
+    ["Terceros", "clientes, proveedores"],
+    ["Catalogo", "productos"],
+    ["Compras", "compras, compra_items"],
+    ["Ventas", "ventas, venta_items"],
+    ["Stock", "unidades"],
+    ["Reparto", "rutas, ruta_items"],
+    ["Finanzas", "movimientos_dinero"],
+    ["Auditoria", "historial_eventos"]
   ],
   [120, 390]
+);
+
+h2("Fusionado frente al boceto anterior");
+table(
+  ["Antes", "Ahora"],
+  [
+    ["categoria / producto_caracteristica", "productos.categoria y productos.atributos"],
+    ["vendedor / repartidor", "usuarios con rol y datos operativos"],
+    ["ruta_parada / ruta_tarea", "ruta_items"],
+    ["comprobante / comprobante_item", "campos y snapshot en ventas"],
+    ["garantia / garantia_evento", "estado de unidades + historial_eventos"],
+    ["caja / rendicion / aplicacion", "movimientos_dinero"],
+    ["auditorias especificas", "historial_eventos"]
+  ],
+  [190, 320]
 );
 
 h2("Fuentes de verdad");
 table(
   ["Dato", "Tabla fuente"],
   [
-    ["Venta existe", "venta"],
-    ["Productos vendidos", "venta_item"],
-    ["Estado fisico y ubicacion", "unidad"],
-    ["Stock disponible", "unidad.estado = EN_OFICINA_DISPONIBLE"],
-    ["Reserva para venta", "unidad.venta_item_id + estado reservado"],
-    ["Cobros y pagos reales", "movimiento_dinero"],
-    ["Pago aplicado a producto", "movimiento_aplicacion"],
-    ["Ruta del repartidor", "ruta, ruta_parada, ruta_tarea"],
-    ["Rendicion", "ruta_rendicion"],
-    ["Comprobante impreso", "comprobante, comprobante_item"],
-    ["Garantia", "garantia"]
+    ["Venta existe", "ventas"],
+    ["Productos vendidos", "venta_items"],
+    ["Compra a proveedor", "compras, compra_items"],
+    ["Stock, IMEI, garantia y ubicacion", "unidades"],
+    ["Ruta del repartidor", "rutas, ruta_items"],
+    ["Cobros, pagos, rendiciones y caja", "movimientos_dinero"],
+    ["Comprobante impreso", "ventas.comprobante_snapshot"],
+    ["Auditoria sensible", "historial_eventos"]
   ],
-  [180, 330]
+  [220, 290]
+);
+
+h2("Estados principales");
+table(
+  ["Entidad", "Estados propuestos"],
+  [
+    ["ventas", "BORRADOR, CONFIRMADA, ENTREGADA_CON_DEUDA, FINALIZADA, CANCELADA"],
+    ["venta_items", "PENDIENTE, RESERVADO, ASIGNADO_RUTA, ENTREGADO, PAGADO, FINALIZADO, CANCELADO"],
+    ["compras", "BORRADOR, PEDIDA, EN_RETIRO, RECIBIDA, CERRADA, CANCELADA"],
+    ["compra_items", "PEDIDO, RETIRADO, RECIBIDO_OFICINA, ENTREGADO_DIRECTO, CANCELADO"],
+    ["unidades", "ESPERADA, CON_REPARTIDOR, OFICINA_DISPONIBLE, OFICINA_RESERVADA, ENTREGADA, FINALIZADA, GARANTIA, CANCELADA"],
+    ["rutas", "PROGRAMADA, EN_CURSO, ABIERTA_CON_PENDIENTES, RENDIDA, CANCELADA"],
+    ["ruta_items", "PENDIENTE, REALIZADO, PARCIAL, CANCELADO"],
+    ["movimientos", "PENDIENTE, CONFIRMADO, ANULADO"]
+  ],
+  [110, 400]
 );
 
 doc.addPage();
 y = page.margin;
-title("Diagrama conceptual de tablas");
-text("Vista simplificada. El diagrama completo en Mermaid y SVG queda en docs/diagramas/.", 10);
+title("Diagrama conceptual");
+write("Vista simplificada de relaciones principales. El diagrama editable queda en docs/diagramas/base-datos-v2.mmd.", 10);
 
-const c = {
-  blue: [238, 246, 255],
-  green: [240, 248, 237],
-  yellow: [255, 247, 232],
-  purple: [246, 239, 255],
-  gray: [246, 246, 246],
-};
+const blue = [238, 246, 255];
+const green = [237, 248, 237];
+const yellow = [255, 247, 232];
+const gray = [246, 246, 246];
 
-drawBox(42, 100, 110, 38, "categoria", c.blue);
-drawBox(180, 100, 110, 38, "producto", c.blue);
-drawBox(318, 100, 135, 38, "producto_caract.", c.blue);
-line(152, 119, 180, 119); line(290, 119, 318, 119);
+box(42, 105, 95, 48, "usuarios", "roles", blue);
+box(42, 180, 95, 48, "clientes", "ventas", blue);
+box(42, 255, 95, 48, "proveedores", "compras", blue);
+box(42, 330, 95, 48, "productos", "catalogo", blue);
+box(190, 170, 115, 54, "ventas", "comprobante snapshot");
+box(350, 170, 125, 54, "venta_items", "pago/entrega");
+box(190, 300, 115, 54, "compras", "proveedor/retiro");
+box(350, 300, 125, 54, "compra_items", "pedido unidad");
+box(505, 235, 115, 60, "unidades", "IMEI estado garantia");
+line(137, 204, 190, 197); line(305, 197, 350, 197); line(475, 197, 505, 250);
+line(137, 279, 190, 327); line(305, 327, 350, 327); line(475, 327, 505, 270);
+line(137, 354, 350, 197); line(137, 354, 350, 327); line(412, 300, 412, 224);
+box(190, 475, 115, 54, "rutas", "repartidor", green);
+box(350, 475, 125, 54, "ruta_items", "retiro entrega", green);
+line(305, 502, 350, 502); line(475, 502, 560, 295);
+box(190, 635, 145, 58, "movimientos", "cobros pagos caja", yellow);
+line(412, 529, 262, 635); line(412, 224, 262, 635); line(412, 354, 262, 635);
+box(390, 635, 150, 58, "historial_eventos", "auditoria", gray);
+line(562, 295, 465, 635); line(262, 693, 390, 664);
 
-drawBox(42, 170, 90, 38, "cliente", c.blue);
-drawBox(155, 170, 90, 38, "proveedor", c.blue);
-drawBox(268, 170, 90, 38, "vendedor", c.blue);
-drawBox(381, 170, 90, 38, "repartidor", c.blue);
-
-drawBox(42, 270, 120, 45, "venta", [255, 255, 255]);
-drawBox(210, 270, 120, 45, "venta_item", [255, 255, 255]);
-drawBox(42, 370, 120, 45, "compra", [255, 255, 255]);
-drawBox(210, 370, 120, 45, "compra_item", [255, 255, 255]);
-drawBox(380, 320, 120, 52, "unidad", [255, 255, 255]);
-line(162, 292, 210, 292); line(330, 292, 380, 346); line(162, 392, 210, 392); line(330, 392, 380, 346); line(270, 370, 270, 315);
-
-drawBox(42, 500, 110, 42, "caja", c.yellow);
-drawBox(180, 500, 145, 42, "movimiento_dinero", c.yellow);
-drawBox(355, 500, 160, 42, "movimiento_aplicacion", c.yellow);
-line(152, 521, 180, 521); line(325, 521, 355, 521); line(435, 500, 270, 315);
-
-drawBox(42, 610, 130, 42, "comprobante", c.purple);
-drawBox(210, 610, 145, 42, "comprobante_item", c.purple);
-line(172, 631, 210, 631); line(282, 610, 270, 315);
-
-drawBox(380, 170, 110, 42, "ruta", c.green);
-drawBox(380, 235, 120, 42, "ruta_parada", c.green);
-drawBox(380, 395, 120, 42, "ruta_tarea", c.green);
-drawBox(380, 610, 130, 42, "ruta_rendicion", c.green);
-line(435, 212, 440, 235); line(440, 277, 440, 395); line(440, 437, 445, 610); line(380, 416, 330, 392); line(380, 416, 330, 292);
-
-drawBox(42, 705, 110, 42, "garantia", c.gray);
-drawBox(180, 705, 125, 42, "garantia_evento", c.gray);
-drawBox(340, 705, 145, 42, "auditoria_evento", c.gray);
-line(152, 726, 180, 726); line(97, 705, 440, 372);
-
-doc.addPage();
-y = page.margin;
-title("Archivos generados");
+h2("Roadmap resumido");
 bullets([
-  "docs/ESTADOS.md",
-  "docs/BASE-DATOS.md",
-  "docs/diagramas/base-datos-v2.mmd",
-  "docs/diagramas/base-datos-v2.svg",
-  "docs/PGL-Pulse-v2-boceto-estados-base.pdf"
-]);
-h2("Proximos pasos");
-bullets([
-  "Revisar si los estados son suficientes para los casos reales.",
-  "Confirmar si los IDs seran uuid o bigint.",
-  "Definir permisos por rol para cada accion.",
-  "Convertir este boceto en migraciones Supabase v2 cuando el modelo este aprobado."
+  "Sprint 1: base local y migraciones.",
+  "Sprint 2: capa de datos y adaptacion tecnica.",
+  "Sprint 3: catalogo, clientes y proveedores.",
+  "Sprint 4: compras y pedidos proveedor.",
+  "Sprint 5: ventas, detalle y comprobante.",
+  "Sprint 6: unidades, stock, IMEI y estados.",
+  "Sprint 7: reparto.",
+  "Sprint 8: finanzas.",
+  "Sprint 9: alertas, reportes y permisos.",
+  "Sprint 10: QA integral local.",
+  "Sprint 11: migracion a Supabase/Vercel."
 ]);
 
 fs.mkdirSync(path.dirname(out), { recursive: true });

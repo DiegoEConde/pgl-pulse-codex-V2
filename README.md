@@ -8,7 +8,7 @@ PGL Pulse v2 reutiliza la estetica, estructura frontend y componentes principale
 
 Proyecto local inicial. Todavia no tiene base Supabase v2 ni migraciones nuevas.
 
-La documentacion oficial inicial esta en `docs/`:
+La documentacion oficial esta en `docs/`:
 
 - `DECISION-V2.md`
 - `MODELO-NEGOCIO.md`
@@ -17,6 +17,7 @@ La documentacion oficial inicial esta en `docs/`:
 - `ESTADOS-Y-CASOS-BORDE.md`
 - `ESTADOS.md`
 - `BASE-DATOS.md`
+- `ROADMAP.md`
 
 Entregable de revision:
 
@@ -26,7 +27,9 @@ Entregable de revision:
 
 La estetica debe mantenerse alineada con PGL Pulse v1. Se espera reutilizar gran parte del frontend existente, pero no se debe forzar el nuevo negocio dentro del modelo viejo de base de datos.
 
-Primero se define el negocio, despues la base de datos, y recien despues se adaptan pantallas y codigo.
+La base de datos local nueva es el punto de partida. Primero se define la estructura, despues se adapta el frontend, luego se prueban flujos completos en local y recien despues se migra a Supabase/Vercel con datos reales aprobados.
+
+Cada sprint cerrado debe tener pruebas, commit y push al repositorio nuevo de GitHub. El repo local v2 aun necesita remoto `origin` antes del primer push obligatorio.
 
 ## Ejecutar
 
