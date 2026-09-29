@@ -31,6 +31,7 @@ Fecha: 2026-09-29
 12. No se permite entrega parcial de una venta con varios productos.
 13. Una venta sin stock queda confirmada, pero no cerrada, y debe generar alerta.
 14. Una venta puede quedar entregada con saldo pendiente.
+15. Una venta de producto sin stock solo puede crearse si existe un pedido al proveedor que incluya ese dispositivo.
 
 ## Stock
 
@@ -42,6 +43,7 @@ Fecha: 2026-09-29
 6. Una venta tambien puede generar una necesidad de compra o retiro si no hay stock.
 7. La entrega directa proveedor -> cliente debe quedar registrada sin simular ingreso fisico a oficina.
 8. Si el producto esta entregado, pagado y con IMEI cargado, el sistema debe permitir finalizarlo y bloquear su edicion.
+9. Si una unidad recepcionada en oficina ya esta asociada a una venta, queda reservada exclusivamente para esa venta hasta entrega o cancelacion.
 
 ## Compras y proveedores
 
@@ -63,6 +65,8 @@ Fecha: 2026-09-29
 7. El repartidor debe rendir al regresar, el mismo dia o el dia siguiente.
 8. La rendicion debe calcular cuanto dinero debe traer el repartidor.
 9. La rendicion debe detectar diferencias entre lo esperado y lo real.
+10. Una rendicion puede cerrarse parcialmente: otros retiros, cobros o sobrantes pueden rendirse aunque una entrega puntual quede abierta para el dia siguiente.
+11. Si el mismo repartidor entrega al dia siguiente, el producto puede quedar fisicamente con el repartidor y esa entrega queda abierta hasta completarse.
 
 ## Formula inicial de rendicion
 

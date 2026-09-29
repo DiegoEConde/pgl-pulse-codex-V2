@@ -83,9 +83,13 @@ La venta se paga como operacion unica, pero en pagos parciales el usuario debe p
 
 Una venta sin stock queda confirmada, pero no cerrada. Debe generar una alerta en el centro de alertas.
 
+Una venta de producto sin stock solo puede crearse si ya existe un pedido al proveedor que incluya ese dispositivo.
+
 No se permite entrega parcial de una venta con varios productos. La entrega debe resolverse completa.
 
 La ganancia se considera definitiva cuando la venta queda finalizada.
+
+Si el producto se recepciona en oficina y ya esta vinculado a una venta, queda reservado exclusivamente para esa venta a menos que la venta se cancele.
 
 ## Venta sin stock y proveedor
 
@@ -156,6 +160,10 @@ Si existe costo de envio, se maneja como una caracteristica del repartidor. Ese 
 El repartidor rinde a alguien del local.
 
 Si la rendicion queda para el dia siguiente, la caja/ruta queda abierta.
+
+El repartidor puede rendir otros dispositivos, dinero sobrante de compras u otros cobros aunque una entrega puntual quede abierta para el dia siguiente.
+
+Si el mismo repartidor entrega al dia siguiente, el producto queda fisicamente con el repartidor hasta la entrega.
 
 Si falta o sobra dinero, se registra como saldo/deuda del repartidor, no solo como diferencia informativa.
 

@@ -46,8 +46,9 @@ Estos son los casos comunes de la operacion real. Las pantallas y la base de dat
 2. Se asigna el retiro a un repartidor.
 3. El repartidor retira el producto.
 4. La entrega al cliente queda para el dia siguiente.
-5. El mismo repartidor conserva o retoma la entrega pendiente segun se defina operativamente.
-6. La ruta/rendicion debe quedar abierta o vinculada hasta registrar entrega, cobro y rendicion.
+5. El producto queda fisicamente con el repartidor hasta la entrega.
+6. El repartidor puede rendir otros dispositivos retirados, dinero sobrante de compras u otros cobros de la ruta.
+7. La entrega pendiente de ese dispositivo queda abierta hasta que el repartidor entregue, registre cobro si corresponde y rinda esa operacion.
 
 ### Caso E - Pago parcial, total o nulo
 
@@ -75,14 +76,15 @@ La entrega y el pago se controlan por separado. Una venta puede estar entregada 
 ## 2. Venta sin stock disponible
 
 1. El usuario crea una venta aunque el producto no este en stock.
-2. La venta queda confirmada, no cerrada, y genera una alerta de abastecimiento.
-3. Se vincula a una compra o retiro de proveedor.
-4. El producto puede:
+2. Para crear esa venta debe existir un pedido al proveedor que incluya ese dispositivo.
+3. La venta queda confirmada, no cerrada, y genera una alerta de abastecimiento.
+4. Se vincula a una compra o retiro de proveedor.
+5. El producto puede:
    - ingresar a stock de oficina y luego entregarse;
    - retirarse del proveedor y entregarse directamente al cliente.
-5. El pago del cliente puede ser total, parcial o cero.
-6. La entrega y el pago se controlan por separado.
-7. Si el proveedor no consigue el producto, se cancela esa linea tanto de la compra como de la venta.
+6. El pago del cliente puede ser total, parcial o cero.
+7. La entrega y el pago se controlan por separado.
+8. Si el proveedor no consigue el producto, se cancela esa linea tanto de la compra como de la venta.
 
 ## 3. Compra para stock de oficina
 
@@ -93,6 +95,7 @@ La entrega y el pago se controlan por separado. Una venta puede estar entregada 
 5. Al recibir la mercaderia en oficina, se actualiza stock.
 6. Si estan disponibles, se cargan IMEI o series.
 7. Si no se cargan en ese momento, quedan pendientes pero editables.
+8. Si la unidad ya esta asociada a una venta, queda reservada exclusivamente para esa venta y no queda disponible para otra operacion.
 
 ## 4. Compra para entrega directa
 
@@ -163,9 +166,6 @@ La entrega y el pago se controlan por separado. Una venta puede estar entregada 
 ## Pendientes de definicion
 
 - Si la ruta se puede editar despues de iniciada.
-- En el caso de entrega al dia siguiente con el mismo repartidor, definir si el producto queda fisicamente con el repartidor o vuelve a oficina hasta la entrega.
-- En el caso de entrega al dia siguiente, definir si la rendicion del retiro queda abierta hasta entregar o si se separa en dos rendiciones vinculadas.
-- Definir si "recepcion en oficina" siempre implica ingreso a stock disponible o si puede quedar reservado inmediatamente para una venta ya creada.
 - Como se registran devoluciones.
 - Si se permite cobrar en una moneda distinta a la venta.
 - Reglas de auditoria para comprobantes editados.
