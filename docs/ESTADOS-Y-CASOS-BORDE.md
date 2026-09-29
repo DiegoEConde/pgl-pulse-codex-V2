@@ -208,17 +208,14 @@ La garantia debe modelarse como circuito propio, no como simple vuelta automatic
 
 ## Migracion desde v1
 
-Pendiente de definir.
+La base actual contiene datos de prueba utilizados para la beta. No se consideran datos reales del negocio.
 
-La pregunta a resolver es que datos del PGL Pulse actual se desean llevar a v2:
+Regla inicial:
 
-- productos;
-- categorias;
-- proveedores;
-- clientes;
-- vendedores;
-- stock;
-- ventas;
-- pagos.
+- no migrar ventas historicas de prueba;
+- no migrar compras historicas de prueba;
+- no migrar pagos o cobros de prueba;
+- no migrar repartos o rendiciones de prueba;
+- no migrar stock de prueba como stock real.
 
-Por ahora no se migra ningun dato historico sin regla especifica.
+Se podrian reutilizar estructuras, criterios de catalogo o datos aprobados explicitamente, pero la carga real de v2 debe hacerse con informacion confirmada por el usuario.

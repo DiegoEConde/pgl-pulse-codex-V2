@@ -172,3 +172,5 @@ Roles iniciales:
 En v1, `unidad` absorbia venta, estado fisico, cliente, vendedor, precio, pago y entrega. En v2 esas responsabilidades se separan.
 
 La unidad queda como trazabilidad fisica. La venta, los pagos, las rutas y la caja tienen tablas propias.
+
+Los datos actuales de v1/beta fueron cargados para pruebas. No se consideran fuente de datos reales para v2.

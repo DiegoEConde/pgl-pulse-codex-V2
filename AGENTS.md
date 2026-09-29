@@ -47,16 +47,11 @@ No se deben copiar automaticamente reglas de negocio de v1 si contradicen el mod
 
 La base Supabase de v2 sera nueva. No usar las migraciones de v1 como esquema definitivo.
 
-Los datos de v1 que podrian migrarse se definiran explicitamente, por ejemplo:
+Los datos actuales de v1/beta son de prueba. No asumir que representan datos reales del negocio.
 
-- productos;
-- categorias;
-- proveedores;
-- clientes;
-- vendedores;
-- stock inicial validado.
+No migrar automaticamente ventas, compras, pagos, repartos, stock ni movimientos historicos desde v1/beta.
 
-No migrar ventas historicas, pagos o unidades sin una regla de conversion aprobada.
+La carga inicial de v2 debe hacerse con datos reales confirmados por el usuario o con catalogos aprobados explicitamente.
 
 ## Seguridad
 

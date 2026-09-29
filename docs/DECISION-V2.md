@@ -32,8 +32,9 @@ Agregar campos al modelo actual produciria reglas confusas, porque hoy muchas op
 - Se recomienda crear un repositorio nuevo: `pgl-pulse-v2`.
 - Se recomienda crear una base Supabase nueva para v2.
 - El codigo actual puede reutilizarse como base visual y tecnica, pero no como contrato de datos definitivo.
-- Los datos de v1 no se migran automaticamente. Se evaluara que conservar: productos, categorias, clientes, proveedores, vendedores y stock inicial validado.
-- Las ventas historicas de v1 solo se migraran si se define una regla explicita de conversion.
+- Los datos actuales de v1/beta son datos de prueba usados por testers. No deben migrarse como datos reales.
+- V2 debe iniciar con datos reales cargados de forma intencional o con catalogos aprobados explicitamente por el usuario.
+- Las ventas, compras, pagos, repartos y stock historicos de v1/beta no se migran automaticamente.
 - Las nuevas reglas de negocio deben documentarse antes de crear migraciones.
 
 ## Principios
