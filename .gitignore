@@ -1,0 +1,17 @@
+/node_modules
+/.next
+/out
+/build
+.env*
+!.env.example
+npm-debug.log*
+.DS_Store
+
+# Resultados reproducibles de las pruebas; no se versionan.
+/tests/artifacts/
+*.tsbuildinfo
+
+# Estado local de la CLI de Supabase
+/supabase/.temp/
+
+.vercel

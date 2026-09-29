@@ -1,0 +1,38 @@
+@property --pulse-head { syntax: "<percentage>"; inherits: false; initial-value: -8%; }
+@property --pulse-tail { syntax: "<percentage>"; inherits: false; initial-value: -8%; }
+.stage { --intro-duration: 5600ms; }
+.application { opacity: 0; }
+.stage[data-finished="true"] .application { opacity: 1; }
+.intro { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; overflow: hidden; background: #090d13; isolation: isolate; }
+.logo { position: relative; z-index: 1; display: block; width: min(640px, 84vw); height: auto; max-height: 80svh; object-fit: contain; opacity: 0; filter: drop-shadow(0 0 22px rgba(51,156,255,.12)); }
+.halo { position: absolute; width: min(900px, 130vw); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(30,115,185,.32), rgba(20,100,185,.15) 40%, transparent 68%); opacity: 0; }
+.pulse { position: absolute; z-index: 2; top: 50%; left: 0; width: 100%; height: clamp(240px, 78svh, 780px); transform: translateY(-58.7%); overflow: hidden; opacity: 0; }
+.pulse::before { content: ""; position: absolute; left: 0; right: 0; top: 58.7%; height: 1px; background: rgba(51,156,255,.18); }
+.pulse::after { content: ""; display: block; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cpolyline%20fill%3D%22none%22%20stroke-width%3D%225%22%20stroke%3D%22white%22%20vector-effect%3D%22non-scaling-stroke%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20points%3D%220%2C58.7%202.4%2C58.7%2070.8%2C58.7%2076.1%2C46.2%2081.1%2C58.7%2089.9%2C58.7%2093.8%2C66.5%20102.8%2C22.7%20110.6%2C78.7%20115.3%2C58.7%20126.4%2C58.7%20134.4%2C54.7%20142.4%2C58.7%20197.8%2C58.7%20200%2C58.7%22%2F%3E%3C%2Fsvg%3E") center / 100% 100% no-repeat; filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 14px #54d5f4) drop-shadow(0 0 32px #339cff) drop-shadow(0 0 42px rgba(51,156,255,.55)); mask-image: linear-gradient(to right, transparent calc(var(--pulse-tail) - 8%), #000 var(--pulse-tail), #000 var(--pulse-head), transparent calc(var(--pulse-head) + 8%)); }
+.stage[data-playing="true"] .intro { animation: introExit var(--intro-duration) linear both; }
+.stage[data-playing="true"] .logo { animation: logoPulse var(--intro-duration) ease-in-out both; }
+.stage[data-playing="true"] .halo { animation: haloPulse var(--intro-duration) ease-in-out both; }
+.stage[data-playing="true"] .pulse { animation: pulseVisibility var(--intro-duration) linear both; }
+.stage[data-playing="true"] .pulse::after { animation: heartbeat 3300ms 1500ms linear both; }
+.stage[data-playing="true"] .application { animation: appReveal var(--intro-duration) ease-in-out both; }
+@keyframes logoPulse { 0% { opacity: 0; transform: scale(.97); filter: blur(0) drop-shadow(0 0 22px rgba(51,156,255,.12)); } 14%, 27% { opacity: 1; transform: scale(1); filter: blur(0) drop-shadow(0 0 22px rgba(51,156,255,.12)); } 46% { opacity: .35; transform: scale(1.025); filter: blur(8px) drop-shadow(0 0 32px rgba(51,156,255,.35)); } 65%, 100% { opacity: 0; transform: scale(1.06); filter: blur(22px) drop-shadow(0 0 44px rgba(51,156,255,.2)); } }
+/* Feather both ends so the light dissolves instead of leaving a hard clipped edge. */
+@keyframes heartbeat {
+  0% { --pulse-head: -8%; --pulse-tail: -8%; }
+  10% { --pulse-head: 33.3333%; --pulse-tail: -8%; }
+  38% { --pulse-head: 66.6667%; --pulse-tail: -8%; }
+  48%, 52% { --pulse-head: 108%; --pulse-tail: -8%; }
+  62% { --pulse-head: 108%; --pulse-tail: 33.3333%; }
+  90% { --pulse-head: 108%; --pulse-tail: 66.6667%; }
+  100% { --pulse-head: 108%; --pulse-tail: 108%; }
+}
+@keyframes pulseVisibility { 0%, 25% { opacity: 0; } 28%, 82% { opacity: 1; } 85.714%, 100% { opacity: 0; } }
+@keyframes haloPulse { 0% { opacity: 0; } 20% { opacity: .4; } 47%, 65% { opacity: 1; } 85.714%, 100% { opacity: 0; } }
+@keyframes introExit { 0%, 85.714% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes appReveal { 0%, 85.714% { opacity: 0; } 100% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .stage { --intro-duration: 800ms; }
+  .stage[data-playing="true"] .pulse, .stage[data-playing="true"] .halo { display: none; animation: none; }
+  .stage[data-playing="true"] .logo { animation: none; opacity: 1; }
+  .stage[data-playing="true"] .pulse::after { animation: none; }
+}
