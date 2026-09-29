@@ -10,6 +10,7 @@ PGL Pulse v1/beta estaba centrado en la unidad fisica. PGL Pulse v2 se redefine 
 2. `MODELO-NEGOCIO.md`: entidades reales del negocio y fuente de verdad de cada dato.
 3. `REGLAS-NEGOCIO.md`: reglas que el sistema no debe romper.
 4. `FLUJOS-OPERATIVOS.md`: pasos reales de trabajo que deben soportar las pantallas.
+5. `ESTADOS-Y-CASOS-BORDE.md`: roles, estados implicitos, caja, comprobantes, cancelaciones, rendiciones y decisiones finas.
 
 Si una implementacion entra en conflicto con estos documentos, se corrige la implementacion o se actualiza primero la regla oficial. No se inventan reglas desde el codigo.
 

@@ -34,14 +34,11 @@ No representa por si mismo una existencia fisica.
 
 Representa disponibilidad vendible.
 
-Debe soportar dos formas:
-
-- stock unitario identificable: celulares, consolas, notebooks u otros productos con IMEI, serie o identificador;
-- stock por cantidad: accesorios u otros productos donde no se controla cada unidad individual.
+En la regla inicial de v2, todos los productos se manejan por unidad. No hay stock por cantidad sin unidad individual.
 
 ### Unidad identificable
 
-Item fisico individual dentro del stock, cuando corresponde controlar IMEI, serie o identificador.
+Item fisico individual dentro del stock. Todos los productos deben poder registrar IMEI, serie o identificador.
 
 El IMEI puede cargarse:
 
@@ -49,7 +46,7 @@ El IMEI puede cargarse:
 - al vender;
 - despues de vender.
 
-El IMEI queda abierto para edicion hasta que se defina una regla de bloqueo posterior.
+El IMEI queda abierto para edicion hasta que el producto este entregado, pagado y con IMEI cargado. En ese momento el sistema debe preguntar si se desea finalizar la transaccion y bloquear la edicion.
 
 ### Compra
 
@@ -114,10 +111,10 @@ Documento numerado entregable al cliente.
 
 Debe poder generarse en PDF y enviarse por WhatsApp.
 
-Hay al menos dos tipos:
+Uso inicial:
 
-- comprobante de compra/venta creada;
-- comprobante de producto pagado o saldo cancelado.
+- comprobante de venta creada;
+- el mismo comprobante puede reimprimirse con estado pagado cuando se completa el pago.
 
 ### Pago
 
@@ -152,12 +149,23 @@ La app debe trabajar con caja real en dolares y pesos.
 
 Cada movimiento debe indicar moneda. Si se usan conversiones, la tasa de cambio debe quedar guardada en la operacion y no recalcularse historicamente.
 
-Medios de pago iniciales a definir:
+Medios de pago iniciales:
 
 - efectivo USD;
 - efectivo ARS;
-- transferencia;
-- otros medios que el usuario confirme.
+- transferencia ARS;
+- credito;
+- debito.
+
+La app debe intentar obtener automaticamente la cotizacion desde una fuente web cuando necesite convertir entre USD y ARS.
+
+## Roles
+
+Roles iniciales:
+
+- administrador: acceso completo;
+- vendedor: opera el sistema, excepto metricas y reportes reservados;
+- repartidor: rol temporal con pantalla limitada para rutas, retiros, entregas y cobros.
 
 ## Relacion con v1
 

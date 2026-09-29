@@ -25,6 +25,7 @@ La fuente de verdad inicial esta en:
 - `docs/MODELO-NEGOCIO.md`
 - `docs/REGLAS-NEGOCIO.md`
 - `docs/FLUJOS-OPERATIVOS.md`
+- `docs/ESTADOS-Y-CASOS-BORDE.md`
 
 Antes de crear migraciones, cambiar tablas o adaptar pantallas, verificar que la decision este contemplada en esos documentos.
 

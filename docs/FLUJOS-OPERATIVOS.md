@@ -8,7 +8,7 @@ Fecha: 2026-09-29
 1. El usuario crea una venta.
 2. Selecciona cliente.
 3. Agrega uno o varios productos.
-4. Elige unidades o cantidades disponibles en stock.
+4. Elige unidades disponibles en stock.
 5. Registra precio, moneda y vendedor.
 6. Registra pago inicial: total, parcial o cero.
 7. El sistema genera saldo pendiente si corresponde.
@@ -19,13 +19,14 @@ Fecha: 2026-09-29
 ## 2. Venta sin stock disponible
 
 1. El usuario crea una venta aunque el producto no este en stock.
-2. La venta queda con una necesidad de abastecimiento.
+2. La venta queda confirmada, no cerrada, y genera una alerta de abastecimiento.
 3. Se vincula a una compra o retiro de proveedor.
 4. El producto puede:
    - ingresar a stock de oficina y luego entregarse;
    - retirarse del proveedor y entregarse directamente al cliente.
 5. El pago del cliente puede ser total, parcial o cero.
 6. La entrega y el pago se controlan por separado.
+7. Si el proveedor no consigue el producto, se cancela esa linea tanto de la compra como de la venta.
 
 ## 3. Compra para stock de oficina
 
@@ -34,7 +35,7 @@ Fecha: 2026-09-29
 3. Si un repartidor retira, la compra se agrega a una ruta.
 4. Si se le entrega dinero al repartidor, se registra en la ruta.
 5. Al recibir la mercaderia en oficina, se actualiza stock.
-6. Si corresponde, se cargan IMEI o series.
+6. Si estan disponibles, se cargan IMEI o series.
 7. Si no se cargan en ese momento, quedan pendientes pero editables.
 
 ## 4. Compra para entrega directa
@@ -74,6 +75,7 @@ Fecha: 2026-09-29
 5. Si cobra, se registra importe, moneda y medio de pago.
 6. Si no cobra o cobra parcial, la venta conserva saldo.
 7. Se puede entregar comprobante por WhatsApp/PDF.
+8. En pagos parciales se debe poder indicar que producto o unidad queda abonado.
 
 ## 7. Rendicion de repartidor
 
@@ -95,18 +97,16 @@ Fecha: 2026-09-29
 4. El comprobante puede enviarse por WhatsApp.
 5. El comprobante debe conservar los importes emitidos.
 
-## 9. Comprobante de producto pagado
+## 9. Comprobante pagado
 
 1. Una venta completa su pago.
-2. El sistema permite emitir comprobante de pago completo o saldo cancelado.
-3. El comprobante tiene numero.
+2. El sistema permite reimprimir el mismo comprobante con estado pagado.
+3. El comprobante conserva el mismo numero.
 4. El comprobante puede descargarse como PDF o enviarse por WhatsApp.
 
 ## Pendientes de definicion
 
 - Si la ruta se puede editar despues de iniciada.
 - Como se registran devoluciones.
-- Como se anula un comprobante.
-- Si la venta puede modificarse despues de emitir comprobante.
 - Si se permite cobrar en una moneda distinta a la venta.
-- Si se permite rendir al dia siguiente sin bloquear caja del dia anterior.
+- Reglas de auditoria para comprobantes editados.

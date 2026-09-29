@@ -42,7 +42,7 @@ Agregar campos al modelo actual produciria reglas confusas, porque hoy muchas op
 - La fuente de verdad de los cobros es el movimiento de pago, no un booleano.
 - La fuente de verdad de una ruta es la ruta asignada a un repartidor, no el estado de una unidad.
 - La fuente de verdad de caja es el movimiento de caja/rendicion.
-- El IMEI debe poder cargarse al recibir, al vender o despues de vender, y seguir editable hasta que una regla posterior indique bloqueo.
+- El IMEI debe poder cargarse al recibir, al vender o despues de vender. Se bloquea solo cuando el producto queda entregado, pagado, con IMEI cargado y el usuario confirma la finalizacion.
 
 ## Fuera de alcance por ahora
 

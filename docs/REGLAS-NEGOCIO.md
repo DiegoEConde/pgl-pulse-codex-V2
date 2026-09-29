@@ -11,6 +11,8 @@ Fecha: 2026-09-29
 4. Un registro financiero no debe depender solamente de un estado visual.
 5. Todo movimiento de dinero debe quedar registrado como movimiento.
 6. Los importes historicos no se recalculan si despues cambia un precio, comision, cotizacion o dato maestro.
+7. Administrador, vendedor y repartidor tienen accesos distintos.
+8. La documentacion de estados y casos borde completa estas reglas y debe revisarse antes de disenar tablas.
 
 ## Ventas
 
@@ -24,16 +26,20 @@ Fecha: 2026-09-29
 8. La venta debe conservar saldo pendiente hasta que los pagos registrados completen el total.
 9. El pago total no implica por si solo que el producto fue entregado.
 10. La entrega no implica por si sola que el producto fue pagado.
+11. En pagos parciales debe poder indicarse que producto o unidad se esta pagando.
+12. No se permite entrega parcial de una venta con varios productos.
+13. Una venta sin stock queda confirmada, pero no cerrada, y debe generar alerta.
 
 ## Stock
 
-1. El sistema debe soportar stock por cantidad y stock por unidad identificable.
-2. Los productos con IMEI, serie o identificador deben permitir trazabilidad individual.
+1. Todos los productos se manejan por unidad.
+2. Todos los productos deben poder registrar IMEI, serie o identificador.
 3. El IMEI puede cargarse al recibir, al vender o despues de vender.
-4. El IMEI queda abierto para edicion hasta que se defina una regla explicita de bloqueo.
+4. El IMEI queda abierto para edicion hasta que el producto este entregado, pagado, con IMEI cargado y el usuario confirme la finalizacion.
 5. Una venta puede reservar stock existente.
 6. Una venta tambien puede generar una necesidad de compra o retiro si no hay stock.
 7. La entrega directa proveedor -> cliente debe quedar registrada sin simular ingreso fisico a oficina.
+8. Si el producto esta entregado, pagado y con IMEI cargado, el sistema debe permitir finalizarlo y bloquear su edicion.
 
 ## Compras y proveedores
 
@@ -77,8 +83,9 @@ Esta formula puede ampliarse si se agregan gastos, cambios de moneda o devolucio
 3. Deben poder enviarse por WhatsApp.
 4. Deben estar numerados.
 5. Al crear una venta debe poder emitirse un comprobante de compra/venta.
-6. Al completar el pago debe poder emitirse un comprobante de producto pagado o saldo cancelado.
-7. Un comprobante emitido no debe cambiar silenciosamente si se modifica una venta; si se permite correccion, debe quedar rastro.
+6. Al completar el pago se reimprime el mismo comprobante con estado pagado.
+7. La numeracion es unica.
+8. Un comprobante emitido puede editarse, pero toda edicion que modifique productos debe ajustar stock y conservar auditoria.
 
 ## Caja
 
@@ -89,15 +96,13 @@ Esta formula puede ampliarse si se agregan gastos, cambios de moneda o devolucio
 5. Los pagos de clientes afectan caja.
 6. Los pagos a proveedores afectan caja.
 7. Las diferencias de rendicion deben quedar visibles.
+8. La decision inicial es una sola caja general, con posibilidad de evaluar cajas multiples mas adelante.
+9. Debe haber consulta por fecha y cierre de caja.
 
 ## Decisiones pendientes
 
 - Estados exactos de venta.
 - Estados exactos de ruta.
 - Estados exactos de compra.
-- Medios de pago definitivos.
-- Manejo de cotizacion USD/ARS.
-- Si habra caja por usuario, por local o una caja general.
-- Reglas para anular ventas y comprobantes.
-- Reglas para bloquear edicion de IMEI.
-- Numeracion exacta de comprobantes.
+- Reglas tecnicas para obtener cotizacion automatica.
+- Auditoria para comprobantes editados.

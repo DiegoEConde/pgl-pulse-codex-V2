@@ -14,6 +14,7 @@ La documentacion oficial inicial esta en `docs/`:
 - `MODELO-NEGOCIO.md`
 - `REGLAS-NEGOCIO.md`
 - `FLUJOS-OPERATIVOS.md`
+- `ESTADOS-Y-CASOS-BORDE.md`
 
 ## Principio de trabajo
 
