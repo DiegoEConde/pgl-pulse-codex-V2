@@ -25,4 +25,4 @@ Si una implementacion entra en conflicto con estos documentos, se corrige la imp
 
 ## Estado
 
-Documentacion inicial basada en la definicion del usuario del 2026-09-29. El modelo de base queda simplificado para iniciar desarrollo local antes de migrar a Supabase/Vercel.
+Documentacion inicial basada en la definicion del usuario del 2026-09-29. El modelo de base queda simplificado para iniciar desarrollo local en JSON. No se usara Supabase por ahora.

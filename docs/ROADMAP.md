@@ -3,7 +3,7 @@
 Estado: roadmap operativo inicial
 Fecha: 2026-09-29
 
-Este roadmap define como se va a construir PGL Pulse v2. La regla central es: primero base local y flujos completos; despues Supabase, Vercel y datos reales.
+Este roadmap define como se va a construir PGL Pulse v2. La regla central es: primero base local JSON y flujos completos. No se usara Supabase por ahora.
 
 ## Reglas de trabajo
 
@@ -21,7 +21,7 @@ Para dar un sprint por terminado deben cumplirse estos puntos:
 
 1. La funcionalidad del sprint esta implementada en local.
 2. La documentacion afectada esta actualizada.
-3. Las migraciones o cambios de base estan versionados.
+3. Los cambios de base local estan versionados.
 4. Se ejecutaron las pruebas correspondientes.
 5. `git status` queda limpio despues del commit.
 6. Se hizo push al repositorio nuevo de GitHub.
@@ -31,7 +31,7 @@ Pruebas minimas por tipo de sprint:
 | Tipo de cambio | Pruebas obligatorias |
 | --- | --- |
 | Solo documentacion | Revision de archivos, `npm test` si el proyecto lo permite |
-| Base de datos | Reset/aplicacion local de migraciones, verificacion de tablas, constraints e indices |
+| Base de datos | Reset de JSON local, verificacion de tablas, constraints logicos e indices |
 | Capa de datos | Typecheck, pruebas de lectura/escritura contra base local |
 | Pantallas | Lint, build, prueba manual del flujo principal |
 | Flujos criticos | Prueba end-to-end local del caso feliz y al menos dos casos borde |
@@ -65,14 +65,14 @@ Cierre Git:
 - Commit sugerido: `docs: definir base simplificada y roadmap v2`.
 - Push requerido cuando exista `origin`.
 
-### Sprint 1 - Base local v2 y migraciones iniciales
+### Sprint 1 - Base local v2 y contrato inicial
 
 Objetivo: crear la base local nueva con las tablas oficiales simplificadas.
 
 Entregables:
 
-- Entorno local definido, preferentemente Supabase local/PostgreSQL.
-- Migracion inicial con tablas, claves, estados basicos e indices principales.
+- Entorno local JSON definido.
+- Contrato local con tablas, claves, estados basicos e indices logicos principales.
 - `.env.local.example` para la base local.
 - Sin datos reales ni datos beta.
 
@@ -94,14 +94,14 @@ Tablas incluidas:
 
 Pruebas:
 
-- Levantar la base local desde cero.
-- Aplicar migraciones sin errores.
-- Verificar claves foraneas, checks e indices minimos.
+- Crear la base local desde el JSON ejemplo.
+- Validar que el JSON respete el contrato.
+- Verificar claves logicas, checks e indices minimos en la capa local.
 - Probar inserciones tecnicas minimas sin datos comerciales reales.
 
 Cierre Git:
 
-- Commit de migraciones y configuracion local.
+- Commit de base local JSON y configuracion local.
 - Push a GitHub.
 
 ### Sprint 2 - Capa de datos y adaptacion tecnica
@@ -323,14 +323,14 @@ Cierre Git:
 
 ### Sprint 10 - QA integral local
 
-Objetivo: probar la app completa localmente antes de tocar Supabase/Vercel.
+Objetivo: probar la app completa localmente antes de considerar cualquier publicacion o base remota.
 
 Entregables:
 
 - Datos ficticios locales controlados.
 - Flujos end-to-end documentados.
 - Correcciones de inconsistencias.
-- Checklist final para migracion nube.
+- Checklist final para una eventual publicacion futura.
 
 Pruebas:
 
@@ -348,23 +348,23 @@ Cierre Git:
 - Commit de QA/correcciones finales locales.
 - Push a GitHub.
 
-### Sprint 11 - Migracion a Supabase y Vercel
+### Sprint 11 - Publicacion futura opcional
 
-Objetivo: publicar recien cuando la version local este validada.
+Objetivo: evaluar publicacion recien cuando la version local este validada.
 
 Entregables:
 
-- Proyecto Supabase v2 o entorno acordado.
-- Migraciones aplicadas en Supabase.
+- Destino de publicacion acordado explicitamente.
+- Migracion o adaptador definidos segun el destino elegido.
 - Variables de entorno configuradas.
-- Deploy en Vercel.
+- Deploy si corresponde.
 - Pruebas con datos reales aprobados.
 - Verificacion de que no se migraron datos beta como reales.
 
 Pruebas:
 
-- Comparar estructura local vs Supabase.
-- Smoke test en Vercel.
+- Comparar estructura local vs destino elegido.
+- Smoke test del entorno publicado si corresponde.
 - Crear flujo real controlado.
 - Verificar permisos por rol.
 - Verificar caja, venta, compra, reparto y comprobante en nube.

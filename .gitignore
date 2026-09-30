@@ -11,7 +11,7 @@ npm-debug.log*
 /tests/artifacts/
 *.tsbuildinfo
 
-# Estado local de la CLI de Supabase
-/supabase/.temp/
+# Base local de trabajo; puede contener datos comerciales.
+/data/*.local.json
 
 .vercel

@@ -1,0 +1,1864 @@
+{
+  "schema": "pgl_pulse_v2",
+  "version": "0.1.0",
+  "status": "contrato inicial para implementacion local",
+  "updatedAt": "2026-09-29",
+  "typeDialect": "logical-local-json",
+  "sourceDocuments": [
+    "docs/DECISION-V2.md",
+    "docs/MODELO-NEGOCIO.md",
+    "docs/REGLAS-NEGOCIO.md",
+    "docs/FLUJOS-OPERATIVOS.md",
+    "docs/ESTADOS-Y-CASOS-BORDE.md",
+    "docs/ESTADOS.md",
+    "docs/BASE-DATOS.md"
+  ],
+  "principles": [
+    "La venta es la entidad comercial principal.",
+    "Clientes y proveedores viven en tablas separadas.",
+    "Vendedor y repartidor son usuarios con rol y datos operativos.",
+    "Cada producto vendido o comprado se maneja como item individual.",
+    "La unidad guarda IMEI, ubicacion fisica, estado y garantia como estado.",
+    "El comprobante de cliente vive en la venta como numero y snapshot.",
+    "Caja, cobros, pagos, rendiciones, diferencias y cierres salen de movimientos_dinero.",
+    "Retiros de proveedor y entregas a cliente se concentran en rutas y ruta_items.",
+    "Los cambios sensibles van a historial_eventos.",
+    "No se cargan datos reales ni datos beta hasta que los flujos funcionen localmente."
+  ],
+  "localPersistence": {
+    "mode": "local-json",
+    "runtimeDataFile": "data/pgl-pulse-v2.local.json",
+    "templateFile": "data/pgl-pulse-v2.local.example.json",
+    "remoteProviders": "none",
+    "notes": [
+      "Por decision actual no se usa Supabase.",
+      "La base operativa inicial sera local y basada en archivos JSON.",
+      "El archivo local real no debe versionarse si contiene datos comerciales.",
+      "Este contrato queda preparado para migrar mas adelante solo si el usuario lo aprueba."
+    ]
+  },
+  "commonTypes": {
+    "id": {
+      "databaseType": "uuid",
+      "default": "gen_random_uuid()"
+    },
+    "amount": {
+      "databaseType": "numeric(14,2)"
+    },
+    "percentage": {
+      "databaseType": "numeric(5,2)"
+    },
+    "timestamp": {
+      "databaseType": "timestamptz"
+    },
+    "snapshot": {
+      "databaseType": "jsonb",
+      "default": "'{}'::jsonb"
+    }
+  },
+  "localTypeMapping": {
+    "uuid": "string con formato UUID",
+    "bigint": "number entero para numeros visibles internos",
+    "numeric(14,2)": "number decimal guardado con redondeo a 2 decimales",
+    "numeric(14,4)": "number decimal guardado con redondeo a 4 decimales",
+    "timestamptz": "string ISO 8601",
+    "jsonb": "object JSON",
+    "boolean": "boolean",
+    "text": "string"
+  },
+  "enums": {
+    "rol_usuario": [
+      "ADMINISTRADOR",
+      "VENDEDOR",
+      "REPARTIDOR"
+    ],
+    "moneda": [
+      "USD",
+      "ARS"
+    ],
+    "medio_pago": [
+      "EFECTIVO_USD",
+      "EFECTIVO_ARS",
+      "TRANSFERENCIA_ARS",
+      "CREDITO",
+      "DEBITO"
+    ],
+    "venta_estado": [
+      "BORRADOR",
+      "CONFIRMADA",
+      "FINALIZADA",
+      "CANCELADA"
+    ],
+    "venta_item_estado": [
+      "PENDIENTE_ABASTECIMIENTO",
+      "RESERVADO_OFICINA",
+      "ASIGNADO_RUTA",
+      "EN_PODER_REPARTIDOR",
+      "ENTREGADO",
+      "FINALIZADO",
+      "CANCELADO",
+      "GARANTIA"
+    ],
+    "compra_estado": [
+      "BORRADOR",
+      "PEDIDA",
+      "EN_RETIRO",
+      "RECIBIDA_PARCIAL",
+      "RECIBIDA_TOTAL",
+      "CERRADA",
+      "CANCELADA"
+    ],
+    "compra_item_estado": [
+      "PEDIDO",
+      "ASIGNADO_RUTA",
+      "RETIRADO_PROVEEDOR",
+      "EN_PODER_REPARTIDOR",
+      "RECIBIDO_OFICINA",
+      "ENTREGADO_DIRECTO",
+      "CANCELADO"
+    ],
+    "unidad_estado": [
+      "ESPERADA_PROVEEDOR",
+      "EN_PODER_REPARTIDOR",
+      "EN_OFICINA_DISPONIBLE",
+      "EN_OFICINA_RESERVADA",
+      "ENTREGADA",
+      "FINALIZADA",
+      "GARANTIA",
+      "CANCELADA"
+    ],
+    "ubicacion_tipo": [
+      "PROVEEDOR",
+      "REPARTIDOR",
+      "OFICINA",
+      "CLIENTE"
+    ],
+    "ruta_estado": [
+      "BORRADOR",
+      "PROGRAMADA",
+      "EN_CURSO",
+      "ABIERTA_CON_PENDIENTES",
+      "PARCIALMENTE_RENDIDA",
+      "RENDIDA",
+      "CANCELADA"
+    ],
+    "ruta_item_tipo": [
+      "RETIRAR_PROVEEDOR",
+      "PAGAR_PROVEEDOR",
+      "ENTREGAR_CLIENTE",
+      "COBRAR_CLIENTE",
+      "RENDIR_OFICINA"
+    ],
+    "ruta_item_destino_tipo": [
+      "PROVEEDOR",
+      "CLIENTE",
+      "OFICINA",
+      "OTRO"
+    ],
+    "ruta_item_estado": [
+      "PENDIENTE",
+      "CONFIRMADA",
+      "ABIERTA",
+      "RENDIDA",
+      "OMITIDA",
+      "CANCELADA"
+    ],
+    "movimiento_dinero_tipo": [
+      "COBRO_CLIENTE",
+      "PAGO_PROVEEDOR",
+      "ENTREGA_REPARTIDOR",
+      "RENDICION_REPARTIDOR",
+      "DIFERENCIA_RENDICION",
+      "AJUSTE",
+      "DEVOLUCION",
+      "CIERRE_CAJA"
+    ],
+    "movimiento_dinero_signo": [
+      "INGRESO",
+      "EGRESO",
+      "NEUTRO"
+    ],
+    "movimiento_dinero_estado": [
+      "REGISTRADO",
+      "APLICADO_PARCIAL",
+      "APLICADO_TOTAL",
+      "ANULADO"
+    ],
+    "comprobante_estado": [
+      "EMITIDO",
+      "PAGADO",
+      "EDITADO",
+      "ANULADO"
+    ],
+    "historial_entidad": [
+      "usuarios",
+      "clientes",
+      "proveedores",
+      "productos",
+      "compras",
+      "compra_items",
+      "ventas",
+      "venta_items",
+      "unidades",
+      "rutas",
+      "ruta_items",
+      "movimientos_dinero"
+    ]
+  },
+  "tables": {
+    "usuarios": {
+      "description": "Usuarios internos, roles, vendedores y repartidores sin duplicar personas.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "auth_user_id": {
+          "type": "uuid",
+          "nullable": true,
+          "unique": true,
+          "notes": "Identificador externo futuro si se agrega autenticacion real. No depende de Supabase."
+        },
+        "nombre": {
+          "type": "text",
+          "nullable": false
+        },
+        "email": {
+          "type": "text",
+          "nullable": true,
+          "unique": true
+        },
+        "telefono": {
+          "type": "text",
+          "nullable": true
+        },
+        "rol": {
+          "type": "text",
+          "nullable": false,
+          "check": "rol in enum.rol_usuario"
+        },
+        "activo": {
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "porcentaje_comision": {
+          "type": "numeric(5,2)",
+          "nullable": false,
+          "default": 0,
+          "check": "porcentaje_comision >= 0"
+        },
+        "costo_envio_usd": {
+          "type": "numeric(14,2)",
+          "nullable": false,
+          "default": 0,
+          "check": "costo_envio_usd >= 0"
+        },
+        "costo_envio_ars": {
+          "type": "numeric(14,2)",
+          "nullable": false,
+          "default": 0,
+          "check": "costo_envio_ars >= 0"
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        }
+      },
+      "indexes": [
+        {
+          "name": "usuarios_rol_idx",
+          "columns": [
+            "rol"
+          ]
+        },
+        {
+          "name": "usuarios_activo_idx",
+          "columns": [
+            "activo"
+          ]
+        }
+      ]
+    },
+    "clientes": {
+      "description": "Personas o empresas que compran.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "nombre": {
+          "type": "text",
+          "nullable": false
+        },
+        "telefono": {
+          "type": "text",
+          "nullable": true
+        },
+        "direccion": {
+          "type": "text",
+          "nullable": true
+        },
+        "localidad": {
+          "type": "text",
+          "nullable": true
+        },
+        "observaciones": {
+          "type": "text",
+          "nullable": true
+        },
+        "activo": {
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "creado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "actualizado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "clientes_nombre_idx",
+          "columns": [
+            "nombre"
+          ]
+        },
+        {
+          "name": "clientes_telefono_idx",
+          "columns": [
+            "telefono"
+          ]
+        }
+      ]
+    },
+    "proveedores": {
+      "description": "Personas o empresas a las que PGL compra productos.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "nombre": {
+          "type": "text",
+          "nullable": false
+        },
+        "telefono": {
+          "type": "text",
+          "nullable": true
+        },
+        "direccion": {
+          "type": "text",
+          "nullable": true
+        },
+        "horario": {
+          "type": "text",
+          "nullable": true
+        },
+        "observaciones": {
+          "type": "text",
+          "nullable": true
+        },
+        "activo": {
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "creado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "actualizado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "proveedores_nombre_idx",
+          "columns": [
+            "nombre"
+          ]
+        },
+        {
+          "name": "proveedores_activo_idx",
+          "columns": [
+            "activo"
+          ]
+        }
+      ]
+    },
+    "productos": {
+      "description": "Catalogo comercial. No representa una unidad fisica concreta.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "categoria": {
+          "type": "text",
+          "nullable": false
+        },
+        "marca": {
+          "type": "text",
+          "nullable": false
+        },
+        "modelo": {
+          "type": "text",
+          "nullable": false
+        },
+        "nombre": {
+          "type": "text",
+          "nullable": false
+        },
+        "atributos": {
+          "type": "jsonb",
+          "nullable": false,
+          "default": "'{}'::jsonb",
+          "notes": "RAM, almacenamiento, color base, pulgadas u otros datos flexibles."
+        },
+        "activo": {
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "creado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "actualizado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "productos_busqueda_idx",
+          "columns": [
+            "categoria",
+            "marca",
+            "modelo",
+            "nombre"
+          ]
+        },
+        {
+          "name": "productos_atributos_gin_idx",
+          "columns": [
+            "atributos"
+          ],
+          "using": "gin"
+        }
+      ]
+    },
+    "compras": {
+      "description": "Pedido o compra a proveedor.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "numero": {
+          "type": "bigint",
+          "nullable": false,
+          "unique": true,
+          "generation": "identity"
+        },
+        "proveedor_id": {
+          "type": "uuid",
+          "nullable": false,
+          "references": "proveedores.id"
+        },
+        "repartidor_retiro_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id",
+          "logicalCheck": "Debe tener rol REPARTIDOR cuando no sea null."
+        },
+        "estado": {
+          "type": "text",
+          "nullable": false,
+          "default": "BORRADOR",
+          "check": "estado in enum.compra_estado"
+        },
+        "fecha_pedido": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "fecha_retiro_programada": {
+          "type": "timestamptz",
+          "nullable": true
+        },
+        "moneda": {
+          "type": "text",
+          "nullable": false,
+          "check": "moneda in enum.moneda"
+        },
+        "total_estimado": {
+          "type": "numeric(14,2)",
+          "nullable": false,
+          "default": 0,
+          "check": "total_estimado >= 0"
+        },
+        "paga_al_retirar": {
+          "type": "boolean",
+          "nullable": false,
+          "default": false
+        },
+        "observaciones": {
+          "type": "text",
+          "nullable": true
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "creado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "actualizado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "compras_proveedor_idx",
+          "columns": [
+            "proveedor_id"
+          ]
+        },
+        {
+          "name": "compras_estado_idx",
+          "columns": [
+            "estado"
+          ]
+        },
+        {
+          "name": "compras_fecha_pedido_idx",
+          "columns": [
+            "fecha_pedido"
+          ]
+        }
+      ]
+    },
+    "compra_items": {
+      "description": "Producto individual pedido al proveedor.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "compra_id": {
+          "type": "uuid",
+          "nullable": false,
+          "references": "compras.id",
+          "onDelete": "restrict"
+        },
+        "producto_id": {
+          "type": "uuid",
+          "nullable": false,
+          "references": "productos.id"
+        },
+        "venta_item_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "venta_items.id",
+          "notes": "Se completa cuando el item abastece una venta especifica."
+        },
+        "unidad_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "unidades.id",
+          "unique": true
+        },
+        "estado": {
+          "type": "text",
+          "nullable": false,
+          "default": "PEDIDO",
+          "check": "estado in enum.compra_item_estado"
+        },
+        "costo_original": {
+          "type": "numeric(14,2)",
+          "nullable": false,
+          "default": 0,
+          "check": "costo_original >= 0"
+        },
+        "moneda": {
+          "type": "text",
+          "nullable": false,
+          "check": "moneda in enum.moneda"
+        },
+        "cancelado_en": {
+          "type": "timestamptz",
+          "nullable": true
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "creado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "actualizado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "compra_items_compra_idx",
+          "columns": [
+            "compra_id"
+          ]
+        },
+        {
+          "name": "compra_items_producto_idx",
+          "columns": [
+            "producto_id"
+          ]
+        },
+        {
+          "name": "compra_items_venta_item_idx",
+          "columns": [
+            "venta_item_id"
+          ]
+        },
+        {
+          "name": "compra_items_estado_idx",
+          "columns": [
+            "estado"
+          ]
+        }
+      ]
+    },
+    "ventas": {
+      "description": "Cabecera de la venta al cliente.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "numero": {
+          "type": "bigint",
+          "nullable": false,
+          "unique": true,
+          "generation": "identity"
+        },
+        "cliente_id": {
+          "type": "uuid",
+          "nullable": false,
+          "references": "clientes.id"
+        },
+        "vendedor_id": {
+          "type": "uuid",
+          "nullable": false,
+          "references": "usuarios.id",
+          "logicalCheck": "Debe tener rol VENDEDOR o ADMINISTRADOR."
+        },
+        "estado": {
+          "type": "text",
+          "nullable": false,
+          "default": "BORRADOR",
+          "check": "estado in enum.venta_estado"
+        },
+        "fecha": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "moneda_principal": {
+          "type": "text",
+          "nullable": false,
+          "check": "moneda_principal in enum.moneda"
+        },
+        "total": {
+          "type": "numeric(14,2)",
+          "nullable": false,
+          "default": 0,
+          "check": "total >= 0"
+        },
+        "saldo_pendiente": {
+          "type": "numeric(14,2)",
+          "nullable": false,
+          "default": 0,
+          "check": "saldo_pendiente >= 0"
+        },
+        "con_envio": {
+          "type": "boolean",
+          "nullable": false,
+          "default": false
+        },
+        "direccion_entrega": {
+          "type": "text",
+          "nullable": true
+        },
+        "repartidor_entrega_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id",
+          "logicalCheck": "Debe tener rol REPARTIDOR cuando no sea null."
+        },
+        "comprobante_numero": {
+          "type": "bigint",
+          "nullable": true,
+          "unique": true,
+          "notes": "Numeracion unica de comprobantes. Puede ser null antes de emitir."
+        },
+        "comprobante_estado": {
+          "type": "text",
+          "nullable": true,
+          "check": "comprobante_estado in enum.comprobante_estado"
+        },
+        "comprobante_snapshot": {
+          "type": "jsonb",
+          "nullable": false,
+          "default": "'{}'::jsonb"
+        },
+        "observaciones": {
+          "type": "text",
+          "nullable": true
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "creado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "actualizado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "ventas_cliente_idx",
+          "columns": [
+            "cliente_id"
+          ]
+        },
+        {
+          "name": "ventas_vendedor_idx",
+          "columns": [
+            "vendedor_id"
+          ]
+        },
+        {
+          "name": "ventas_estado_idx",
+          "columns": [
+            "estado"
+          ]
+        },
+        {
+          "name": "ventas_fecha_idx",
+          "columns": [
+            "fecha"
+          ]
+        },
+        {
+          "name": "ventas_saldo_pendiente_idx",
+          "columns": [
+            "saldo_pendiente"
+          ],
+          "where": "saldo_pendiente > 0"
+        }
+      ]
+    },
+    "venta_items": {
+      "description": "Producto individual vendido dentro de una venta.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "venta_id": {
+          "type": "uuid",
+          "nullable": false,
+          "references": "ventas.id",
+          "onDelete": "restrict"
+        },
+        "producto_id": {
+          "type": "uuid",
+          "nullable": false,
+          "references": "productos.id"
+        },
+        "unidad_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "unidades.id",
+          "unique": true
+        },
+        "compra_item_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "compra_items.id",
+          "unique": true,
+          "notes": "Obligatorio para venta sin stock confirmada."
+        },
+        "estado": {
+          "type": "text",
+          "nullable": false,
+          "default": "PENDIENTE_ABASTECIMIENTO",
+          "check": "estado in enum.venta_item_estado"
+        },
+        "precio_venta": {
+          "type": "numeric(14,2)",
+          "nullable": false,
+          "check": "precio_venta >= 0"
+        },
+        "moneda": {
+          "type": "text",
+          "nullable": false,
+          "check": "moneda in enum.moneda"
+        },
+        "saldo_pendiente": {
+          "type": "numeric(14,2)",
+          "nullable": false,
+          "default": 0,
+          "check": "saldo_pendiente >= 0"
+        },
+        "pagado_en": {
+          "type": "timestamptz",
+          "nullable": true
+        },
+        "entregado_en": {
+          "type": "timestamptz",
+          "nullable": true
+        },
+        "finalizado_en": {
+          "type": "timestamptz",
+          "nullable": true
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "creado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "actualizado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "venta_items_venta_idx",
+          "columns": [
+            "venta_id"
+          ]
+        },
+        {
+          "name": "venta_items_producto_idx",
+          "columns": [
+            "producto_id"
+          ]
+        },
+        {
+          "name": "venta_items_estado_idx",
+          "columns": [
+            "estado"
+          ]
+        },
+        {
+          "name": "venta_items_saldo_pendiente_idx",
+          "columns": [
+            "saldo_pendiente"
+          ],
+          "where": "saldo_pendiente > 0"
+        }
+      ]
+    },
+    "unidades": {
+      "description": "Unidad fisica o esperada de un producto.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "producto_id": {
+          "type": "uuid",
+          "nullable": false,
+          "references": "productos.id"
+        },
+        "estado": {
+          "type": "text",
+          "nullable": false,
+          "default": "ESPERADA_PROVEEDOR",
+          "check": "estado in enum.unidad_estado"
+        },
+        "imei": {
+          "type": "text",
+          "nullable": true,
+          "unique": true,
+          "notes": "Editable hasta finalizar la unidad."
+        },
+        "serie": {
+          "type": "text",
+          "nullable": true,
+          "unique": true
+        },
+        "color": {
+          "type": "text",
+          "nullable": true
+        },
+        "atributos": {
+          "type": "jsonb",
+          "nullable": false,
+          "default": "'{}'::jsonb"
+        },
+        "ubicacion_tipo": {
+          "type": "text",
+          "nullable": false,
+          "check": "ubicacion_tipo in enum.ubicacion_tipo"
+        },
+        "ubicacion_usuario_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id",
+          "notes": "Se usa cuando ubicacion_tipo = REPARTIDOR."
+        },
+        "ubicacion_cliente_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "clientes.id",
+          "notes": "Se usa cuando ubicacion_tipo = CLIENTE."
+        },
+        "ubicacion_proveedor_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "proveedores.id",
+          "notes": "Se usa cuando ubicacion_tipo = PROVEEDOR."
+        },
+        "compra_item_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "compra_items.id",
+          "unique": true
+        },
+        "venta_item_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "venta_items.id",
+          "unique": true
+        },
+        "finalizada_en": {
+          "type": "timestamptz",
+          "nullable": true
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "creado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "actualizado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        }
+      },
+      "checks": [
+        {
+          "name": "unidades_ubicacion_consistente_chk",
+          "expression": "La ubicacion debe corresponder con una sola referencia: usuario para REPARTIDOR, cliente para CLIENTE, proveedor para PROVEEDOR, ninguna para OFICINA."
+        }
+      ],
+      "indexes": [
+        {
+          "name": "unidades_producto_estado_idx",
+          "columns": [
+            "producto_id",
+            "estado"
+          ]
+        },
+        {
+          "name": "unidades_ubicacion_idx",
+          "columns": [
+            "ubicacion_tipo",
+            "ubicacion_usuario_id",
+            "ubicacion_cliente_id",
+            "ubicacion_proveedor_id"
+          ]
+        },
+        {
+          "name": "unidades_compra_item_idx",
+          "columns": [
+            "compra_item_id"
+          ]
+        },
+        {
+          "name": "unidades_venta_item_idx",
+          "columns": [
+            "venta_item_id"
+          ]
+        }
+      ]
+    },
+    "rutas": {
+      "description": "Salida o trabajo asignado a un repartidor.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "repartidor_id": {
+          "type": "uuid",
+          "nullable": false,
+          "references": "usuarios.id",
+          "logicalCheck": "Debe tener rol REPARTIDOR."
+        },
+        "estado": {
+          "type": "text",
+          "nullable": false,
+          "default": "BORRADOR",
+          "check": "estado in enum.ruta_estado"
+        },
+        "fecha_programada": {
+          "type": "timestamptz",
+          "nullable": false
+        },
+        "iniciada_en": {
+          "type": "timestamptz",
+          "nullable": true
+        },
+        "cerrada_en": {
+          "type": "timestamptz",
+          "nullable": true
+        },
+        "observaciones": {
+          "type": "text",
+          "nullable": true
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "creado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "actualizado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "rutas_repartidor_idx",
+          "columns": [
+            "repartidor_id"
+          ]
+        },
+        {
+          "name": "rutas_estado_idx",
+          "columns": [
+            "estado"
+          ]
+        },
+        {
+          "name": "rutas_fecha_programada_idx",
+          "columns": [
+            "fecha_programada"
+          ]
+        }
+      ]
+    },
+    "ruta_items": {
+      "description": "Accion concreta dentro de una ruta.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "ruta_id": {
+          "type": "uuid",
+          "nullable": false,
+          "references": "rutas.id",
+          "onDelete": "restrict"
+        },
+        "orden": {
+          "type": "integer",
+          "nullable": false,
+          "check": "orden > 0"
+        },
+        "tipo": {
+          "type": "text",
+          "nullable": false,
+          "check": "tipo in enum.ruta_item_tipo"
+        },
+        "destino_tipo": {
+          "type": "text",
+          "nullable": false,
+          "check": "destino_tipo in enum.ruta_item_destino_tipo"
+        },
+        "proveedor_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "proveedores.id"
+        },
+        "cliente_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "clientes.id"
+        },
+        "direccion": {
+          "type": "text",
+          "nullable": true
+        },
+        "compra_item_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "compra_items.id"
+        },
+        "venta_item_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "venta_items.id"
+        },
+        "unidad_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "unidades.id"
+        },
+        "importe_esperado": {
+          "type": "numeric(14,2)",
+          "nullable": false,
+          "default": 0,
+          "check": "importe_esperado >= 0"
+        },
+        "moneda": {
+          "type": "text",
+          "nullable": true,
+          "check": "moneda is null or moneda in enum.moneda"
+        },
+        "estado": {
+          "type": "text",
+          "nullable": false,
+          "default": "PENDIENTE",
+          "check": "estado in enum.ruta_item_estado"
+        },
+        "realizado_en": {
+          "type": "timestamptz",
+          "nullable": true
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "creado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "actualizado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        }
+      },
+      "checks": [
+        {
+          "name": "ruta_items_destino_consistente_chk",
+          "expression": "Si destino_tipo es PROVEEDOR debe existir proveedor_id; si es CLIENTE debe existir cliente_id; si es OFICINA no requiere tercero; si es OTRO debe existir direccion."
+        },
+        {
+          "name": "ruta_items_tipo_operacion_chk",
+          "expression": "RETIRAR_PROVEEDOR y PAGAR_PROVEEDOR apuntan a compra_item_id/proveedor_id; ENTREGAR_CLIENTE y COBRAR_CLIENTE apuntan a venta_item_id/cliente_id; RENDIR_OFICINA apunta a ruta_id."
+        }
+      ],
+      "indexes": [
+        {
+          "name": "ruta_items_ruta_orden_uidx",
+          "columns": [
+            "ruta_id",
+            "orden"
+          ],
+          "unique": true
+        },
+        {
+          "name": "ruta_items_estado_idx",
+          "columns": [
+            "estado"
+          ]
+        },
+        {
+          "name": "ruta_items_compra_item_idx",
+          "columns": [
+            "compra_item_id"
+          ]
+        },
+        {
+          "name": "ruta_items_venta_item_idx",
+          "columns": [
+            "venta_item_id"
+          ]
+        }
+      ]
+    },
+    "movimientos_dinero": {
+      "description": "Registro unico de dinero: caja, cobros, pagos, rendiciones, diferencias, deudas y cierres.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "tipo": {
+          "type": "text",
+          "nullable": false,
+          "check": "tipo in enum.movimiento_dinero_tipo"
+        },
+        "signo": {
+          "type": "text",
+          "nullable": false,
+          "check": "signo in enum.movimiento_dinero_signo"
+        },
+        "moneda": {
+          "type": "text",
+          "nullable": false,
+          "check": "moneda in enum.moneda"
+        },
+        "medio_pago": {
+          "type": "text",
+          "nullable": false,
+          "check": "medio_pago in enum.medio_pago"
+        },
+        "importe": {
+          "type": "numeric(14,2)",
+          "nullable": false,
+          "check": "importe >= 0"
+        },
+        "estado": {
+          "type": "text",
+          "nullable": false,
+          "default": "REGISTRADO",
+          "check": "estado in enum.movimiento_dinero_estado"
+        },
+        "fecha": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "venta_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "ventas.id"
+        },
+        "venta_item_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "venta_items.id"
+        },
+        "compra_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "compras.id"
+        },
+        "compra_item_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "compra_items.id"
+        },
+        "ruta_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "rutas.id"
+        },
+        "ruta_item_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "ruta_items.id"
+        },
+        "cliente_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "clientes.id"
+        },
+        "proveedor_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "proveedores.id"
+        },
+        "usuario_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id",
+          "notes": "Responsable que registra o liquida el movimiento."
+        },
+        "cierre_codigo": {
+          "type": "text",
+          "nullable": true,
+          "notes": "Agrupa movimientos incluidos en un cierre de caja."
+        },
+        "cotizacion_usada": {
+          "type": "numeric(14,4)",
+          "nullable": true,
+          "check": "cotizacion_usada is null or cotizacion_usada > 0"
+        },
+        "snapshot": {
+          "type": "jsonb",
+          "nullable": false,
+          "default": "'{}'::jsonb"
+        },
+        "observaciones": {
+          "type": "text",
+          "nullable": true
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        },
+        "creado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "actualizado_por": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        }
+      },
+      "checks": [
+        {
+          "name": "movimientos_medio_pago_moneda_chk",
+          "expression": "EFECTIVO_USD requiere moneda USD; EFECTIVO_ARS y TRANSFERENCIA_ARS requieren moneda ARS. CREDITO y DEBITO quedan sin restriccion fuerte hasta confirmar operatoria."
+        },
+        {
+          "name": "movimientos_tipo_signo_chk",
+          "expression": "COBRO_CLIENTE suele ser INGRESO; PAGO_PROVEEDOR y ENTREGA_REPARTIDOR suelen ser EGRESO; RENDICION_REPARTIDOR, DIFERENCIA_RENDICION, AJUSTE, DEVOLUCION y CIERRE_CAJA se validan segun snapshot y contexto."
+        }
+      ],
+      "indexes": [
+        {
+          "name": "movimientos_fecha_idx",
+          "columns": [
+            "fecha"
+          ]
+        },
+        {
+          "name": "movimientos_tipo_estado_idx",
+          "columns": [
+            "tipo",
+            "estado"
+          ]
+        },
+        {
+          "name": "movimientos_moneda_medio_pago_idx",
+          "columns": [
+            "moneda",
+            "medio_pago"
+          ]
+        },
+        {
+          "name": "movimientos_venta_idx",
+          "columns": [
+            "venta_id"
+          ]
+        },
+        {
+          "name": "movimientos_venta_item_idx",
+          "columns": [
+            "venta_item_id"
+          ]
+        },
+        {
+          "name": "movimientos_compra_idx",
+          "columns": [
+            "compra_id"
+          ]
+        },
+        {
+          "name": "movimientos_compra_item_idx",
+          "columns": [
+            "compra_item_id"
+          ]
+        },
+        {
+          "name": "movimientos_ruta_idx",
+          "columns": [
+            "ruta_id"
+          ]
+        },
+        {
+          "name": "movimientos_cliente_idx",
+          "columns": [
+            "cliente_id"
+          ]
+        },
+        {
+          "name": "movimientos_proveedor_idx",
+          "columns": [
+            "proveedor_id"
+          ]
+        },
+        {
+          "name": "movimientos_cierre_codigo_idx",
+          "columns": [
+            "cierre_codigo"
+          ]
+        }
+      ]
+    },
+    "historial_eventos": {
+      "description": "Auditoria e historial operativo de cambios sensibles.",
+      "primaryKey": [
+        "id"
+      ],
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        "entidad": {
+          "type": "text",
+          "nullable": false,
+          "check": "entidad in enum.historial_entidad"
+        },
+        "entidad_id": {
+          "type": "uuid",
+          "nullable": false
+        },
+        "tipo": {
+          "type": "text",
+          "nullable": false,
+          "notes": "Ejemplos: IMEI_EDITADO, VENTA_EDITADA, COMPROBANTE_EDITADO, ITEM_CANCELADO, UNIDAD_ESTADO_CAMBIADO, GARANTIA_INICIADA, CAJA_AJUSTADA, RENDICION_DIFERENCIA, COMISION_CAMBIADA."
+        },
+        "antes": {
+          "type": "jsonb",
+          "nullable": false,
+          "default": "'{}'::jsonb"
+        },
+        "despues": {
+          "type": "jsonb",
+          "nullable": false,
+          "default": "'{}'::jsonb"
+        },
+        "detalle": {
+          "type": "text",
+          "nullable": true
+        },
+        "usuario_id": {
+          "type": "uuid",
+          "nullable": true,
+          "references": "usuarios.id"
+        },
+        "creado_en": {
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "now()"
+        }
+      },
+      "indexes": [
+        {
+          "name": "historial_entidad_idx",
+          "columns": [
+            "entidad",
+            "entidad_id"
+          ]
+        },
+        {
+          "name": "historial_tipo_idx",
+          "columns": [
+            "tipo"
+          ]
+        },
+        {
+          "name": "historial_creado_en_idx",
+          "columns": [
+            "creado_en"
+          ]
+        }
+      ]
+    }
+  },
+  "relationships": [
+    {
+      "from": "ventas.cliente_id",
+      "to": "clientes.id",
+      "type": "many-to-one"
+    },
+    {
+      "from": "ventas.vendedor_id",
+      "to": "usuarios.id",
+      "type": "many-to-one"
+    },
+    {
+      "from": "venta_items.venta_id",
+      "to": "ventas.id",
+      "type": "many-to-one"
+    },
+    {
+      "from": "venta_items.producto_id",
+      "to": "productos.id",
+      "type": "many-to-one"
+    },
+    {
+      "from": "venta_items.unidad_id",
+      "to": "unidades.id",
+      "type": "one-to-one-optional"
+    },
+    {
+      "from": "venta_items.compra_item_id",
+      "to": "compra_items.id",
+      "type": "one-to-one-optional"
+    },
+    {
+      "from": "compras.proveedor_id",
+      "to": "proveedores.id",
+      "type": "many-to-one"
+    },
+    {
+      "from": "compras.repartidor_retiro_id",
+      "to": "usuarios.id",
+      "type": "many-to-one-optional"
+    },
+    {
+      "from": "compra_items.compra_id",
+      "to": "compras.id",
+      "type": "many-to-one"
+    },
+    {
+      "from": "compra_items.producto_id",
+      "to": "productos.id",
+      "type": "many-to-one"
+    },
+    {
+      "from": "compra_items.venta_item_id",
+      "to": "venta_items.id",
+      "type": "one-to-one-optional"
+    },
+    {
+      "from": "compra_items.unidad_id",
+      "to": "unidades.id",
+      "type": "one-to-one-optional"
+    },
+    {
+      "from": "unidades.producto_id",
+      "to": "productos.id",
+      "type": "many-to-one"
+    },
+    {
+      "from": "unidades.compra_item_id",
+      "to": "compra_items.id",
+      "type": "one-to-one-optional"
+    },
+    {
+      "from": "unidades.venta_item_id",
+      "to": "venta_items.id",
+      "type": "one-to-one-optional"
+    },
+    {
+      "from": "rutas.repartidor_id",
+      "to": "usuarios.id",
+      "type": "many-to-one"
+    },
+    {
+      "from": "ruta_items.ruta_id",
+      "to": "rutas.id",
+      "type": "many-to-one"
+    },
+    {
+      "from": "ruta_items.compra_item_id",
+      "to": "compra_items.id",
+      "type": "many-to-one-optional"
+    },
+    {
+      "from": "ruta_items.venta_item_id",
+      "to": "venta_items.id",
+      "type": "many-to-one-optional"
+    },
+    {
+      "from": "ruta_items.unidad_id",
+      "to": "unidades.id",
+      "type": "many-to-one-optional"
+    },
+    {
+      "from": "movimientos_dinero.venta_id",
+      "to": "ventas.id",
+      "type": "many-to-one-optional"
+    },
+    {
+      "from": "movimientos_dinero.venta_item_id",
+      "to": "venta_items.id",
+      "type": "many-to-one-optional"
+    },
+    {
+      "from": "movimientos_dinero.compra_id",
+      "to": "compras.id",
+      "type": "many-to-one-optional"
+    },
+    {
+      "from": "movimientos_dinero.compra_item_id",
+      "to": "compra_items.id",
+      "type": "many-to-one-optional"
+    },
+    {
+      "from": "movimientos_dinero.ruta_id",
+      "to": "rutas.id",
+      "type": "many-to-one-optional"
+    },
+    {
+      "from": "movimientos_dinero.ruta_item_id",
+      "to": "ruta_items.id",
+      "type": "many-to-one-optional"
+    }
+  ],
+  "businessRules": {
+    "ventas": [
+      "Una venta puede tener uno o varios venta_items.",
+      "Una venta sin stock queda confirmada pero no cerrada y debe tener venta_item.compra_item_id vinculado.",
+      "No se permite entrega parcial de una venta con varios productos.",
+      "El pago total no implica entrega; la entrega no implica pago.",
+      "La ganancia se considera definitiva cuando la venta queda FINALIZADA."
+    ],
+    "stock": [
+      "Todos los productos se manejan por unidad.",
+      "El IMEI puede cargarse al recibir, al vender o despues de vender.",
+      "El IMEI queda editable hasta que la unidad este entregada, pagada, con IMEI cargado y finalizada por confirmacion del usuario.",
+      "Si una unidad recepcionada en oficina ya esta asociada a una venta, queda reservada exclusivamente para esa venta."
+    ],
+    "compras": [
+      "Una compra pertenece a un proveedor.",
+      "Un proveedor puede cobrar al retirar mercaderia o fiar total o parcialmente.",
+      "Una compra puede abastecer stock de oficina o una venta especifica.",
+      "Si el proveedor no consigue un producto, se cancela compra_item y venta_item relacionados sin cancelar necesariamente toda la compra o venta."
+    ],
+    "rutas": [
+      "Una ruta pertenece a un repartidor.",
+      "Una ruta puede mezclar retiros, pagos a proveedores, entregas y cobros a clientes.",
+      "La ruta puede recibir items nuevos mientras esta en curso.",
+      "La rendicion puede quedar parcial si quedan tareas abiertas para otro dia."
+    ],
+    "finanzas": [
+      "Todo movimiento de dinero debe registrarse en movimientos_dinero.",
+      "La caja es una sola caja general derivada de movimientos_dinero.",
+      "Los pagos parciales deben poder apuntar a venta_item_id o compra_item_id.",
+      "El cierre de caja es un movimiento CIERRE_CAJA con snapshot de saldos.",
+      "La cotizacion usada queda guardada historicamente en el movimiento u operacion correspondiente."
+    ],
+    "comprobantes": [
+      "El comprobante vive en ventas como comprobante_numero, comprobante_estado y comprobante_snapshot.",
+      "Al completar el pago se reimprime el mismo comprobante con estado PAGADO.",
+      "La numeracion de comprobantes es unica.",
+      "Toda edicion de comprobante que afecte productos debe ajustar stock y registrar historial_eventos."
+    ],
+    "seguridad": [
+      "La arquitectura final no puede ir a produccion sin usuarios, auditoria y reglas de acceso.",
+      "Por ahora los roles y permisos se resolveran localmente desde usuarios. Las politicas de acceso definitivas quedan para una etapa futura."
+    ]
+  },
+  "derivedQueries": {
+    "stock_disponible": {
+      "source": "unidades",
+      "filter": "estado = 'EN_OFICINA_DISPONIBLE' and venta_item_id is null"
+    },
+    "ventas_con_deuda": {
+      "source": "ventas",
+      "filter": "saldo_pendiente > 0 and estado <> 'CANCELADA'"
+    },
+    "ventas_pendientes_abastecimiento": {
+      "source": "venta_items",
+      "filter": "estado = 'PENDIENTE_ABASTECIMIENTO'"
+    },
+    "rutas_abiertas": {
+      "source": "rutas",
+      "filter": "estado in ('EN_CURSO', 'ABIERTA_CON_PENDIENTES', 'PARCIALMENTE_RENDIDA')"
+    },
+    "saldo_caja_por_moneda_y_medio": {
+      "source": "movimientos_dinero",
+      "formula": "sum(case signo when 'INGRESO' then importe when 'EGRESO' then -importe else 0 end) group by moneda, medio_pago"
+    }
+  },
+  "implementationOrder": [
+    "usuarios",
+    "clientes",
+    "proveedores",
+    "productos",
+    "ventas",
+    "compras",
+    "venta_items",
+    "compra_items",
+    "unidades",
+    "rutas",
+    "ruta_items",
+    "movimientos_dinero",
+    "historial_eventos",
+    "validaciones_locales",
+    "indices_logicos_para_busquedas_locales",
+    "permisos_locales_por_rol"
+  ],
+  "pendingDecisions": [
+    "Confirmar si BORRADOR se persiste para ventas y compras o queda como estado local de formulario.",
+    "Confirmar checks definitivos de transiciones de estados antes de implementar validaciones locales.",
+    "Definir autenticacion local antes de cargar datos reales.",
+    "Definir si credito y debito siempre operan en ARS.",
+    "Definir en que momento, si corresponde, el JSON local deja de alcanzar y se evalua otra persistencia."
+  ],
+  "seedPolicy": {
+    "realData": "prohibido hasta aprobacion explicita del usuario",
+    "v1BetaData": "no migrar automaticamente",
+    "technicalFixtures": "permitidas solo para pruebas locales controladas"
+  }
+}

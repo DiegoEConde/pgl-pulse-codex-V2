@@ -107,7 +107,7 @@ function line(x1, y1, x2, y2) {
 }
 
 title("PGL Pulse v2 - Base simplificada y estados");
-write("Documento de revision generado desde la documentacion v2. No es una migracion SQL final. Sirve para validar reglas, estados, tablas y relaciones antes de implementar localmente.", 11);
+write("Documento de revision generado desde la documentacion v2. No es una migracion SQL ni un contrato de Supabase. Sirve para validar reglas, estados, tablas y relaciones antes de implementar localmente en JSON.", 11);
 
 h2("Reglas que guian el diseno");
 bullets([
@@ -119,6 +119,7 @@ bullets([
   "Garantia es un estado de la unidad.",
   "El comprobante vive como numero y snapshot dentro de la venta.",
   "Caja real se calcula desde movimientos de dinero.",
+  "Por ahora la base es local JSON, sin Supabase.",
   "No se migran datos beta como datos reales."
 ]);
 
@@ -228,7 +229,7 @@ bullets([
   "Sprint 8: finanzas.",
   "Sprint 9: alertas, reportes y permisos.",
   "Sprint 10: QA integral local.",
-  "Sprint 11: migracion a Supabase/Vercel."
+  "Sprint 11: publicacion futura opcional."
 ]);
 
 fs.mkdirSync(path.dirname(out), { recursive: true });

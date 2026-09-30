@@ -6,7 +6,7 @@ PGL Pulse v2 reutiliza la estetica, estructura frontend y componentes principale
 
 ## Estado
 
-Proyecto local inicial. Todavia no tiene base Supabase v2 ni migraciones nuevas.
+Proyecto local inicial. No usa Supabase por ahora; la base v2 se desarrollara localmente desde JSON.
 
 La documentacion oficial esta en `docs/`:
 
@@ -27,13 +27,13 @@ Entregable de revision:
 
 La estetica debe mantenerse alineada con PGL Pulse v1. Se espera reutilizar gran parte del frontend existente, pero no se debe forzar el nuevo negocio dentro del modelo viejo de base de datos.
 
-La base de datos local nueva es el punto de partida. Primero se define la estructura, despues se adapta el frontend, luego se prueban flujos completos en local y recien despues se migra a Supabase/Vercel con datos reales aprobados.
+La base de datos local nueva es el punto de partida. Primero se define la estructura en JSON, despues se adapta el frontend y luego se prueban flujos completos en local. Cualquier migracion a nube queda fuera de esta etapa y requiere aprobacion explicita.
 
 Cada sprint cerrado debe tener pruebas, commit y push al repositorio nuevo de GitHub. El repo local v2 aun necesita remoto `origin` antes del primer push obligatorio.
 
 ## Ejecutar
 
-Pendiente de ajustar cuando exista la base v2.
+Pendiente de ajustar cuando la app lea y escriba la base local JSON.
 
 Base heredada del proyecto Next.js actual:
 

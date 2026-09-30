@@ -5,7 +5,9 @@ Fecha: 2026-09-29
 
 Este documento reemplaza el boceto inicial de muchas tablas. PGL Pulse v2 parte de una base mas simple, pensada para ventas, compras, reparto, caja y stock por unidad, sin separar entidades que todavia no necesitan una tabla propia.
 
-No es una migracion SQL todavia. Es el contrato que deben respetar las migraciones locales.
+No es una migracion SQL ni un contrato de Supabase. Es el contrato que debe respetar la base local JSON y cualquier implementacion posterior.
+
+Decision actual: por ahora no se usara Supabase. Todo el desarrollo de datos sera local.
 
 ## Principios
 
@@ -22,6 +24,8 @@ No es una migracion SQL todavia. Es el contrato que deben respetar las migracion
 11. No se cargan datos reales ni datos beta hasta que los flujos funcionen localmente.
 
 ## Tipos comunes
+
+Estos nombres funcionan como tipos logicos del contrato. En la base local JSON se guardan como strings, numeros, booleanos u objetos JSON segun corresponda; no implican usar PostgreSQL ni Supabase.
 
 - IDs: `uuid`, salvo numeros visibles como venta/comprobante.
 - Importes: `numeric(14,2)`.
@@ -40,7 +44,7 @@ Usuarios internos del sistema. Existe para manejar accesos, permisos, vendedores
 Campos clave:
 
 - `id`
-- `auth_user_id`
+- `auth_user_id` nullable para una autenticacion futura si se decide agregarla
 - `nombre`
 - `email`
 - `telefono`
@@ -348,7 +352,7 @@ Debe usarse especialmente para:
 
 ## Decisiones pendientes
 
-- Confirmar herramienta local definitiva: Supabase local con PostgreSQL es la opcion preferida.
-- Definir checks exactos de estados antes de escribir migraciones.
-- Definir politicas RLS cuando se active autenticacion real.
+- Definir checks exactos de estados antes de implementar validaciones locales.
+- Definir autenticacion local antes de cargar datos reales.
+- Definir en que momento, si corresponde, el JSON local deja de alcanzar y se evalua otra persistencia.
 - Definir si se usaran ramas por sprint o commits directos a `main` cuando el remoto exista.

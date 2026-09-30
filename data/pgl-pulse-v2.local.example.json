@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "schema": "pgl_pulse_v2",
+    "version": "0.1.0",
+    "mode": "local-json",
+    "createdAt": "2026-09-29",
+    "updatedAt": "2026-09-29",
+    "sourceContract": "docs/base-datos-v2.json",
+    "realDataAllowed": false,
+    "notes": [
+      "Archivo ejemplo para desarrollo local.",
+      "No cargar datos reales hasta que los flujos principales funcionen y el usuario lo apruebe.",
+      "Copiar a data/pgl-pulse-v2.local.json para usarlo como base local de trabajo."
+    ]
+  },
+  "sequences": {
+    "compras.numero": 0,
+    "ventas.numero": 0,
+    "ventas.comprobante_numero": 0
+  },
+  "tables": {
+    "usuarios": [],
+    "clientes": [],
+    "proveedores": [],
+    "productos": [],
+    "compras": [],
+    "compra_items": [],
+    "ventas": [],
+    "venta_items": [],
+    "unidades": [],
+    "rutas": [],
+    "ruta_items": [],
+    "movimientos_dinero": [],
+    "historial_eventos": []
+  }
+}
