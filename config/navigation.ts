@@ -4,8 +4,9 @@ export const navigationItems: NavigationItem[] = [
   { id: "inicio", label: "Inicio" },
   { id: "compras", label: "Compras" },
   { id: "ventas", label: "Ventas" },
-  { id: "reparto", label: "Pedidos" },
   { id: "stock", label: "Stock" },
+  { id: "reparto", label: "Reparto" },
+  { id: "caja", label: "Caja" },
   { id: "datos", label: "Datos" },
   { id: "reportes", label: "Reportes" },
 ];

@@ -1,0 +1,262 @@
+.topbar {
+  height: auto;
+  min-height: 76px;
+  row-gap: 8px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.topbar :global(.nav) {
+  min-width: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 4px;
+}
+
+.topbar :global(.nav-item) {
+  font-size: 12px;
+  padding: 9px 10px;
+}
+
+.topbar :global(.nav-item.active)::after {
+  bottom: -12px;
+}
+
+.workspace {
+  width: 100%;
+}
+
+.page {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 18px;
+}
+
+.hero h1 {
+  margin: 7px 0 8px;
+  color: #edf8ff;
+  font-size: clamp(31px, 3vw, 48px);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.hero p {
+  max-width: 780px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.visualAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 43px;
+  padding: 10px 14px;
+  color: #dcecff;
+  background: linear-gradient(135deg, rgba(13, 28, 45, .95), rgba(20, 61, 99, .9));
+  border: 1px solid rgba(88, 170, 255, .72);
+  border-radius: 10px;
+  box-shadow: 0 12px 26px rgba(34, 120, 255, .16);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metrics :global(.metric) {
+  min-height: 126px;
+  padding: 18px;
+}
+
+.metrics :global(.metric strong) {
+  margin-top: 13px;
+  font-size: clamp(24px, 2.1vw, 32px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+  grid-template-areas:
+    "flow side"
+    "cards side"
+    "table table";
+  gap: 16px;
+}
+
+.panel {
+  min-width: 0;
+  padding: 18px;
+  background: linear-gradient(145deg, rgba(18, 26, 36, .96), rgba(12, 18, 25, .96));
+  border: 1px solid rgba(90, 138, 182, .22);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 52px rgba(0, 0, 0, .18), inset 0 1px 0 rgba(255, 255, 255, .02);
+}
+
+.panel :global(.panel-head) {
+  min-height: 0;
+  margin-bottom: 14px;
+}
+
+.panel :global(.panel-head h2) {
+  margin-top: 4px;
+  font-size: 18px;
+}
+
+.flowPanel {
+  grid-area: flow;
+}
+
+.cardsPanel {
+  grid-area: cards;
+}
+
+.tablePanel {
+  grid-area: table;
+}
+
+.sidePanel {
+  grid-area: side;
+  background: linear-gradient(165deg, #131d2a, #0d141e);
+}
+
+.lanes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.lane,
+.summaryCard,
+.sideItem {
+  min-width: 0;
+  padding: 14px;
+  background: rgba(255, 255, 255, .018);
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+}
+
+.lane strong,
+.summaryCard strong,
+.sideItem strong {
+  display: block;
+  margin-top: 15px;
+  color: #edf8ff;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.lane p,
+.summaryCard p,
+.sideItem p {
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.sideItems {
+  display: grid;
+  gap: 10px;
+}
+
+.sideItem {
+  background: rgba(255, 255, 255, .022);
+}
+
+.sideItem strong {
+  font-size: 23px;
+}
+
+.tablePanel :global(.table-wrap) {
+  overflow: auto;
+}
+
+.tablePanel table {
+  table-layout: fixed;
+}
+
+.tablePanel th,
+.tablePanel td {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1180px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "flow"
+      "cards"
+      "side"
+      "table";
+  }
+}
+
+@media (max-width: 860px) {
+  .lanes,
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .visualAction {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 740px) {
+  .topbar :global(.nav) {
+    justify-content: flex-start;
+  }
+
+  .topbar :global(.nav-item.active)::after {
+    bottom: -5px;
+  }
+
+  .metrics,
+  .lanes,
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero h1 {
+    font-size: 31px;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  .lane,
+  .summaryCard,
+  .sideItem {
+    padding: 13px;
+  }
+}
