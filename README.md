@@ -32,6 +32,7 @@ Base local Sprint 1:
 - `docs/SPRINT-3-DATOS.md`
 - `docs/SPRINT-4-COMPRAS.md`
 - `docs/SPRINT-5-VENTAS.md`
+- `docs/SPRINT-6-STOCK.md`
 - `data/pgl-pulse-v2.local.example.json`
 - `.env.local.example`
 

@@ -26,8 +26,9 @@ import Navigation from "@/components/core/Navigation/Navigation";
 import MastersScreen from "@/components/features/masters/MastersScreen";
 import PurchasesV2Screen from "@/components/features/purchases/PurchasesV2Screen";
 import SalesV2Screen from "@/components/features/sales/SalesV2Screen";
+import StockV2Screen from "@/components/features/stock/StockV2Screen";
 import { useApp } from "@/contexts/AppContext";
-import type { LocalDbStatus, MasterData, PurchaseData, SalesData } from "@/lib/local-db";
+import type { LocalDbStatus, MasterData, PurchaseData, SalesData, StockData } from "@/lib/local-db";
 import type { PageId } from "@/types/navigation";
 import styles from "./PulseMockup.module.css";
 
@@ -87,6 +88,7 @@ type PulseMockupProps = {
   masterData?: MasterData;
   purchaseData?: PurchaseData;
   salesData?: SalesData;
+  stockData?: StockData;
 };
 
 const toneClass = {
@@ -437,7 +439,7 @@ const pages: Record<MockupPageId, MockupPage> = {
   },
 };
 
-export default function PulseMockup({ localDbStatus, masterData, purchaseData, salesData }: PulseMockupProps) {
+export default function PulseMockup({ localDbStatus, masterData, purchaseData, salesData, stockData }: PulseMockupProps) {
   const { currentPage } = useApp();
   const [menuOpen, setMenuOpen] = useState(false);
   const page = pages[currentPage] ?? pages.inicio;
@@ -466,6 +468,8 @@ export default function PulseMockup({ localDbStatus, masterData, purchaseData, s
       <main className={`workspace program-workspace ${styles.workspace}`}>
         {currentPage === "ventas" ? (
           <SalesV2Screen initialData={salesData ?? { ventas: [], venta_items: [], clientes: [], productos: [], vendedores: [], repartidores: [], unidades: [], compra_items: [], movimientos_dinero: [], rutas: [], ruta_items: [] }} />
+        ) : currentPage === "stock" ? (
+          <StockV2Screen initialData={stockData ?? { unidades: [], productos: [], compras: [], compra_items: [], proveedores: [], ventas: [], venta_items: [], clientes: [], repartidores: [], rutas: [], ruta_items: [], historial_eventos: [] }} />
         ) : currentPage === "compras" ? (
           <PurchasesV2Screen initialData={purchaseData ?? { compras: [], compra_items: [], proveedores: [], productos: [], repartidores: [], ventas: [], venta_items: [], clientes: [], rutas: [], ruta_items: [] }} />
         ) : currentPage === "datos" ? (
