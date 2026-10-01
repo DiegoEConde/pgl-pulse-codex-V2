@@ -7,7 +7,20 @@ Estado: propuesta inicial para revision
 
 PGL Pulse v2 se desarrollara como una nueva version del producto, con modelo de negocio y base de datos nuevos.
 
-El sistema deja de estar centrado en la unidad fisica y pasa a estar centrado en ventas, compras, stock, rutas, pagos, caja real, comprobantes y rendiciones.
+El sistema deja de estar centrado en la unidad fisica y pasa a estar centrado en compras, ventas, stock, reparto, caja real, comprobantes y rendiciones.
+
+La organizacion inicial de pantallas aprobada es:
+
+- Inicio;
+- Compras;
+- Ventas;
+- Stock;
+- Reparto;
+- Caja;
+- Datos;
+- Reportes.
+
+Pagos, cobros, entregas de dinero a repartidores, rendiciones, diferencias y cierres se gestionan dentro de Caja. Comprobantes se generan y consultan desde el detalle de una venta. Repartidores se administran como usuarios en Datos y se operan dentro de Reparto cuando tienen una ruta asignada.
 
 La unidad fisica sigue existiendo cuando sea necesaria para controlar IMEI, serie, color, estado fisico o trazabilidad, pero ya no sera la entidad principal sobre la que se fuerzan ventas, cobros y entregas.
 
@@ -41,9 +54,9 @@ Agregar campos al modelo actual produciria reglas confusas, porque hoy muchas op
 ## Principios
 
 - La fuente de verdad de una venta es `venta`, no `unidad`.
-- La fuente de verdad de los cobros es el movimiento de pago, no un booleano.
+- La fuente de verdad de los cobros y pagos es el movimiento de dinero, no un booleano.
 - La fuente de verdad de una ruta es la ruta asignada a un repartidor, no el estado de una unidad.
-- La fuente de verdad de caja es el movimiento de caja/rendicion.
+- La fuente de verdad de caja es `movimientos_dinero`, incluyendo cobros, pagos, rendiciones, diferencias y cierres.
 - El IMEI debe poder cargarse al recibir, al vender o despues de vender. Se bloquea solo cuando el producto queda entregado, pagado, con IMEI cargado y el usuario confirma la finalizacion.
 
 ## Fuera de alcance por ahora

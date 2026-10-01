@@ -2,7 +2,9 @@
 
 Nueva version de PGL Pulse basada en el cambio de modelo de negocio definido el 2026-09-29.
 
-PGL Pulse v2 reutiliza la estetica, estructura frontend y componentes principales de PGL Pulse v1, pero redefine el dominio interno: deja de ser un sistema centrado en la unidad fisica y pasa a ser un sistema de ventas, compras, stock, rutas, repartidores, comprobantes, pagos, caja real y rendiciones.
+PGL Pulse v2 reutiliza la estetica, estructura frontend y componentes principales de PGL Pulse v1, pero redefine el dominio interno: deja de ser un sistema centrado en la unidad fisica y pasa a ser un sistema de compras, ventas, stock, reparto, caja real y reportes.
+
+La organizacion inicial aprobada de la app es: Inicio, Compras, Ventas, Stock, Reparto, Caja, Datos y Reportes. Caja concentra cobros, pagos, entregas de dinero, rendiciones, diferencias y cierres. Los comprobantes se generan desde el detalle de Ventas. Los repartidores se administran como usuarios en Datos y se asignan desde Reparto.
 
 ## Estado
 
@@ -21,7 +23,7 @@ La documentacion oficial esta en `docs/`:
 
 Entregable de revision:
 
-- `docs/PGL-Pulse-v2-boceto-estados-base.pdf`
+- `docs/PGL-Pulse-v2-mockup-pestanas.pdf`
 
 ## Principio de trabajo
 
@@ -29,7 +31,7 @@ La estetica debe mantenerse alineada con PGL Pulse v1. Se espera reutilizar gran
 
 La base de datos local nueva es el punto de partida. Primero se define la estructura en JSON, despues se adapta el frontend y luego se prueban flujos completos en local. Cualquier migracion a nube queda fuera de esta etapa y requiere aprobacion explicita.
 
-Cada sprint cerrado debe tener pruebas, commit y push al repositorio nuevo de GitHub. El repo local v2 aun necesita remoto `origin` antes del primer push obligatorio.
+Cada sprint cerrado debe tener pruebas, commit y push al repositorio nuevo de GitHub. El repo local v2 ya tiene remoto `origin` configurado.
 
 ## Ejecutar
 

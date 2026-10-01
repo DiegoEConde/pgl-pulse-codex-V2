@@ -2,7 +2,7 @@
   "schema": "pgl_pulse_v2",
   "version": "0.1.0",
   "status": "contrato inicial para implementacion local",
-  "updatedAt": "2026-09-29",
+  "updatedAt": "2026-10-01",
   "typeDialect": "logical-local-json",
   "sourceDocuments": [
     "docs/DECISION-V2.md",
@@ -20,7 +20,9 @@
     "Cada producto vendido o comprado se maneja como item individual.",
     "La unidad guarda IMEI, ubicacion fisica, estado y garantia como estado.",
     "El comprobante de cliente vive en la venta como numero y snapshot.",
-    "Caja, cobros, pagos, rendiciones, diferencias y cierres salen de movimientos_dinero.",
+    "Caja es la seccion funcional para cobros, pagos, rendiciones, diferencias y cierres que salen de movimientos_dinero.",
+    "Comprobantes se operan desde Ventas y viven en ventas como numero, estado y snapshot.",
+    "Repartidores se administran en usuarios y se asignan desde Reparto.",
     "Retiros de proveedor y entregas a cliente se concentran en rutas y ruta_items.",
     "Los cambios sensibles van a historial_eventos.",
     "No se cargan datos reales ni datos beta hasta que los flujos funcionen localmente."
@@ -37,6 +39,16 @@
       "Este contrato queda preparado para migrar mas adelante solo si el usuario lo aprueba."
     ]
   },
+  "uiNavigation": [
+    "Inicio",
+    "Compras",
+    "Ventas",
+    "Stock",
+    "Reparto",
+    "Caja",
+    "Datos",
+    "Reportes"
+  ],
   "commonTypes": {
     "id": {
       "databaseType": "uuid",
@@ -1791,15 +1803,17 @@
       "La ruta puede recibir items nuevos mientras esta en curso.",
       "La rendicion puede quedar parcial si quedan tareas abiertas para otro dia."
     ],
-    "finanzas": [
+    "caja": [
       "Todo movimiento de dinero debe registrarse en movimientos_dinero.",
       "La caja es una sola caja general derivada de movimientos_dinero.",
+      "Caja concentra cobros, pagos, entregas de dinero a repartidores, rendiciones, diferencias, ajustes y cierres.",
       "Los pagos parciales deben poder apuntar a venta_item_id o compra_item_id.",
       "El cierre de caja es un movimiento CIERRE_CAJA con snapshot de saldos.",
       "La cotizacion usada queda guardada historicamente en el movimiento u operacion correspondiente."
     ],
     "comprobantes": [
       "El comprobante vive en ventas como comprobante_numero, comprobante_estado y comprobante_snapshot.",
+      "El comprobante se emite, descarga, envia y reimprime desde el detalle de una venta.",
       "Al completar el pago se reimprime el mismo comprobante con estado PAGADO.",
       "La numeracion de comprobantes es unica.",
       "Toda edicion de comprobante que afecte productos debe ajustar stock y registrar historial_eventos."

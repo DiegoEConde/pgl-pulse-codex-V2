@@ -2,7 +2,9 @@
 
 Esta carpeta define el nuevo modelo de negocio de PGL Pulse v2 antes de crear la base nueva o modificar pantallas.
 
-PGL Pulse v1/beta estaba centrado en la unidad fisica. PGL Pulse v2 se redefine como un sistema de ventas, compras, stock, rutas, repartidores, comprobantes, pagos, caja real y rendiciones.
+PGL Pulse v1/beta estaba centrado en la unidad fisica. PGL Pulse v2 se redefine como un sistema de compras, ventas, stock, reparto, caja real y reportes.
+
+La organizacion inicial aprobada de pantallas es: Inicio, Compras, Ventas, Stock, Reparto, Caja, Datos y Reportes. Caja concentra cobros, pagos, entregas de dinero a repartidores, rendiciones, diferencias y cierres. Comprobantes se generan desde Ventas. Repartidores se administran en Datos y se asignan desde Reparto.
 
 ## Orden de autoridad
 
@@ -17,7 +19,7 @@ PGL Pulse v1/beta estaba centrado en la unidad fisica. PGL Pulse v2 se redefine 
 
 ## Entregables de revision
 
-- `PGL-Pulse-v2-boceto-estados-base.pdf`: PDF de revision con estados, tablas y diagrama conceptual.
+- `PGL-Pulse-v2-mockup-pestanas.pdf`: PDF de revision del mockup aprobado y sus pestañas.
 - `diagramas/base-datos-v2.mmd`: diagrama Mermaid editable.
 - `diagramas/base-datos-v2.svg`: diagrama visual exportable.
 

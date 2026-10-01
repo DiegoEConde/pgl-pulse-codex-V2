@@ -7,6 +7,16 @@ Fecha: 2026-09-29
 
 Estos son los casos comunes de la operacion real. Las pantallas y la base de datos deben poder representar estos caminos sin forzar estados falsos.
 
+La organizacion inicial de pantallas es:
+
+- Compras para pedidos a proveedores y origen de stock;
+- Ventas para operaciones comerciales y comprobantes;
+- Stock para unidades e IMEI;
+- Reparto para rutas, paradas y asignacion de repartidor;
+- Caja para cobros, pagos, entregas de dinero, rendiciones, diferencias y cierres;
+- Datos para clientes, proveedores, productos y usuarios/repartidores;
+- Reportes para lectura administrativa.
+
 ### Caso A - Retiro, oficina y entrega en local
 
 1. Se hace el pedido al proveedor.
@@ -69,7 +79,7 @@ La entrega y el pago se controlan por separado. Una venta puede estar entregada 
 5. Registra precio, moneda y vendedor.
 6. Registra pago inicial: total, parcial o cero.
 7. El sistema genera saldo pendiente si corresponde.
-8. El sistema permite emitir comprobante de venta.
+8. El sistema permite emitir comprobante de venta desde el detalle de la venta.
 9. Si el cliente retira en local, se registra entrega.
 10. Si se envia por repartidor, se agrega a una ruta.
 
@@ -116,14 +126,14 @@ La entrega y el pago se controlan por separado. Una venta puede estar entregada 
 4. Agrega paradas de cliente.
 5. Ordena la ruta.
 6. Registra dinero entregado al repartidor, si corresponde.
-7. La ruta muestra:
+7. La pantalla Reparto muestra:
    - que debe retirar;
    - que debe entregar;
    - cuanto debe pagar;
    - cuanto debe cobrar;
    - comprobantes disponibles.
 8. El repartidor realiza la ruta.
-9. Al volver, se registra rendicion.
+9. Al volver, la rendicion se registra desde Caja, vinculada a la ruta.
 
 ## 6. Entrega a cliente por repartidor
 
@@ -133,12 +143,12 @@ La entrega y el pago se controlan por separado. Una venta puede estar entregada 
 4. El repartidor entrega productos.
 5. Si cobra, se registra importe, moneda y medio de pago.
 6. Si no cobra o cobra parcial, la venta conserva saldo.
-7. Se puede entregar comprobante por WhatsApp/PDF.
+7. Se puede entregar comprobante por WhatsApp/PDF generado desde el detalle de la venta.
 8. En pagos parciales se debe poder indicar que producto o unidad queda abonado.
 
-## 7. Rendicion de repartidor
+## 7. Rendicion de repartidor en Caja
 
-1. Se abre la ruta pendiente de rendicion.
+1. Se abre Caja y se selecciona la ruta pendiente de rendicion.
 2. El sistema muestra dinero entregado al salir.
 3. El sistema muestra pagos esperados a proveedores.
 4. El sistema muestra cobros esperados a clientes.
@@ -148,15 +158,15 @@ La entrega y el pago se controlan por separado. Una venta puede estar entregada 
 8. El sistema calcula diferencia.
 9. La ruta queda rendida, o queda con diferencia pendiente de resolver.
 
-## 8. Comprobante de venta
+## 8. Comprobante de venta desde Ventas
 
-1. Al crear una venta, el usuario puede emitir comprobante.
+1. Al crear o abrir una venta, el usuario puede emitir comprobante desde el detalle/modal de venta.
 2. El comprobante tiene numero.
 3. El comprobante puede descargarse como PDF.
 4. El comprobante puede enviarse por WhatsApp.
 5. El comprobante debe conservar los importes emitidos.
 
-## 9. Comprobante pagado
+## 9. Comprobante pagado desde Ventas
 
 1. Una venta completa su pago.
 2. El sistema permite reimprimir el mismo comprobante con estado pagado.

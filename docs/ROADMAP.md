@@ -35,10 +35,10 @@ Pruebas minimas por tipo de sprint:
 | Capa de datos | Typecheck, pruebas de lectura/escritura contra base local |
 | Pantallas | Lint, build, prueba manual del flujo principal |
 | Flujos criticos | Prueba end-to-end local del caso feliz y al menos dos casos borde |
-| Finanzas | Prueba de saldos, pagos parciales, cierres, diferencias y deudas |
+| Caja | Prueba de saldos, pagos parciales, cierres, diferencias y deudas |
 | Reparto | Prueba de retiro, entrega, cobro, rendicion parcial y pendiente al dia siguiente |
 
-Nota: el repo v2 local todavia no tiene remoto configurado. Antes de cerrar el primer sprint de codigo hay que crear o vincular `origin` con el repositorio nuevo de GitHub.
+Nota: el repo v2 local ya tiene `origin` configurado. Cada sprint cerrado debe hacer push al repositorio nuevo de GitHub.
 
 ## Sprints
 
@@ -193,7 +193,8 @@ Entregables:
 - Seleccion del producto/unidad que se paga en pago parcial.
 - Opcion de entrega en local o con envio.
 - Seleccion de repartidor cuando hay envio.
-- Numero y snapshot de comprobante en la venta.
+- Numero, estado y snapshot de comprobante en la venta.
+- Emision, descarga, envio y reimpresion de comprobante desde el detalle/modal de venta.
 
 Pruebas:
 
@@ -236,7 +237,7 @@ Cierre Git:
 
 ### Sprint 7 - Pestaña Reparto
 
-Objetivo: crear la pantalla operativa de repartidores con retiros y entregas.
+Objetivo: crear la pantalla operativa de Reparto con rutas, repartidores asignados, retiros y entregas.
 
 Entregables:
 
@@ -250,6 +251,7 @@ Entregables:
 - Modal de entrega/cobro.
 - Soporte para ruta que queda abierta al dia siguiente.
 - Soporte para rendicion parcial.
+- Los perfiles de repartidores se administran en Datos, no en una pestaña separada.
 
 Pruebas:
 
@@ -264,15 +266,16 @@ Cierre Git:
 - Commit de reparto.
 - Push a GitHub.
 
-### Sprint 8 - Pestaña Finanzas
+### Sprint 8 - Pestaña Caja
 
 Objetivo: hacer que la caja sea confiable y que los pagos/cobros no dependan de estados visuales.
 
 Entregables:
 
-- Pestaña Finanzas.
+- Pestaña Caja.
 - Cobros de clientes.
 - Pagos a proveedores.
+- Entregas de dinero a repartidores.
 - Pagos parciales por item.
 - Deudas de clientes.
 - Deudas con proveedores.
@@ -293,7 +296,7 @@ Pruebas:
 
 Cierre Git:
 
-- Commit de finanzas.
+- Commit de caja.
 - Push a GitHub.
 
 ### Sprint 9 - Alertas, reportes y permisos

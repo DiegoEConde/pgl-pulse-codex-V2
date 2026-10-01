@@ -14,11 +14,13 @@ PGL Pulse v2 separa dimensiones:
 - estado comercial de la venta;
 - estado de cada item vendido;
 - estado fisico de la unidad;
-- estado financiero de pagos y caja;
-- estado logistico de rutas y paradas;
+- estado financiero de caja, pagos, cobros, rendiciones y diferencias;
+- estado logistico de reparto, rutas y paradas;
 - estado documental del comprobante.
 
 Algunas etiquetas de pantalla se calculan combinando esas dimensiones. Por ejemplo, "entregada con deuda" puede derivarse de venta entregada + saldo pendiente, sin necesitar un estado unico que mezcle entrega y pago.
+
+Los estados no implican pestañas separadas. Pagos y rendiciones se operan desde Caja; comprobantes se operan desde el detalle de Ventas; repartidores se administran en Datos y se asignan desde Reparto.
 
 ## Venta
 
@@ -171,6 +173,8 @@ Estado propuesto para `ruta_rendicion.estado`:
 | `PARCIAL` | Se rindio parte de la ruta, pero quedan tareas abiertas. |
 | `CERRADA_OK` | Rendicion cerrada sin diferencia. |
 | `CERRADA_CON_DIFERENCIA` | Rendicion cerrada con deuda o saldo del repartidor. |
+
+Estos estados se consultan y modifican desde Caja en la organizacion inicial de pantallas.
 
 ## Garantia
 

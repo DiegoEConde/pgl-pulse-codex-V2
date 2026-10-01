@@ -22,6 +22,8 @@ PGL Pulse v2 gestiona todo el ciclo operativo y financiero basico de PGL:
 - caja real;
 - rendiciones.
 
+La interfaz inicial se organiza en las pestañas Inicio, Compras, Ventas, Stock, Reparto, Caja, Datos y Reportes. Esta organizacion no elimina entidades del negocio: pagos y rendiciones siguen existiendo, pero se operan desde Caja; comprobantes siguen existiendo, pero se emiten desde el detalle de Ventas; repartidores siguen existiendo, pero se administran como usuarios en Datos y se usan operativamente desde Reparto.
+
 ## Entidades principales
 
 ### Producto
@@ -113,8 +115,10 @@ Debe poder generarse en PDF y enviarse por WhatsApp.
 
 Uso inicial:
 
-- comprobante de venta creada;
+- comprobante de venta creada desde el detalle de una venta;
 - el mismo comprobante puede reimprimirse con estado pagado cuando se completa el pago.
+
+No existe como pestaña principal inicial. Su origen y consulta natural estan dentro de Ventas.
 
 ### Pago
 
@@ -136,6 +140,8 @@ Debe registrar:
 Registro real de dinero en dolares y pesos.
 
 No es solo una vista de saldos: debe representar movimientos reales.
+
+En la interfaz, Caja es la seccion unificada para cobros de clientes, pagos a proveedores, entregas de dinero a repartidores, rendiciones, diferencias, ajustes y cierres.
 
 ### Rendicion
 
@@ -165,12 +171,12 @@ Roles iniciales:
 
 - administrador: acceso completo;
 - vendedor: opera el sistema, excepto metricas y reportes reservados;
-- repartidor: rol temporal con pantalla limitada para rutas, retiros, entregas y cobros.
+- repartidor: rol temporal con vista limitada de Reparto para rutas, retiros, entregas y cobros.
 
 ## Relacion con v1
 
 En v1, `unidad` absorbia venta, estado fisico, cliente, vendedor, precio, pago y entrega. En v2 esas responsabilidades se separan.
 
-La unidad queda como trazabilidad fisica. La venta, los pagos, las rutas y la caja tienen tablas propias.
+La unidad queda como trazabilidad fisica. La venta, los pagos, las rutas y la caja tienen responsabilidades separadas. En la interfaz, pagos y rendiciones se concentran en Caja.
 
 Los datos actuales de v1/beta fueron cargados para pruebas. No se consideran fuente de datos reales para v2.

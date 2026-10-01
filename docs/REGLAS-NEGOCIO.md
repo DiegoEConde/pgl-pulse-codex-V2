@@ -5,7 +5,7 @@ Fecha: 2026-09-29
 
 ## Reglas generales
 
-1. PGL Pulse v2 gestiona compras, ventas, stock, rutas, comprobantes, pagos, caja real y rendiciones.
+1. PGL Pulse v2 gestiona compras, ventas, stock, reparto, comprobantes, pagos, caja real y rendiciones.
 2. La venta es una entidad principal.
 3. La unidad fisica no es la entidad central del sistema.
 4. Un registro financiero no debe depender solamente de un estado visual.
@@ -14,6 +14,10 @@ Fecha: 2026-09-29
 7. Administrador, vendedor y repartidor tienen accesos distintos.
 8. La documentacion de estados y casos borde completa estas reglas y debe revisarse antes de disenar tablas.
 9. Retiro de proveedor, recepcion en oficina, entrega al cliente, cobro y rendicion son eventos independientes aunque puedan ocurrir en la misma ruta.
+10. La organizacion inicial de pantallas es Inicio, Compras, Ventas, Stock, Reparto, Caja, Datos y Reportes.
+11. Pagos, cobros, entregas de dinero a repartidores, rendiciones, diferencias y cierres se operan desde Caja.
+12. Los comprobantes se emiten y consultan desde el detalle de Ventas, no desde una pestaña propia.
+13. Los repartidores se administran como usuarios en Datos y se usan operativamente dentro de Reparto.
 
 ## Ventas
 
@@ -54,7 +58,7 @@ Fecha: 2026-09-29
 5. Una compra puede abastecer stock de oficina o una venta especifica.
 6. Si una compra abastece una venta especifica, debe conservarse esa relacion.
 
-## Repartidores y rutas
+## Reparto, repartidores y rutas
 
 1. Una ruta pertenece a un repartidor.
 2. Una ruta puede mezclar retiro de proveedores y entrega a clientes.
@@ -67,6 +71,8 @@ Fecha: 2026-09-29
 9. La rendicion debe detectar diferencias entre lo esperado y lo real.
 10. Una rendicion puede cerrarse parcialmente: otros retiros, cobros o sobrantes pueden rendirse aunque una entrega puntual quede abierta para el dia siguiente.
 11. Si el mismo repartidor entrega al dia siguiente, el producto puede quedar fisicamente con el repartidor y esa entrega queda abierta hasta completarse.
+12. Reparto es la pantalla operativa para rutas, paradas, retiros, entregas y asignacion de repartidor.
+13. No hay una pestaña principal separada para repartidores; sus perfiles pertenecen a Datos.
 
 ## Formula inicial de rendicion
 
@@ -92,6 +98,7 @@ Esta formula puede ampliarse si se agregan gastos, cambios de moneda o devolucio
 6. Al completar el pago se reimprime el mismo comprobante con estado pagado.
 7. La numeracion es unica.
 8. Un comprobante emitido puede editarse, pero toda edicion que modifique productos debe ajustar stock y conservar auditoria.
+9. La emision, vista, descarga, envio y reimpresion de comprobantes ocurre desde el detalle de la venta.
 
 ## Caja
 
@@ -104,6 +111,8 @@ Esta formula puede ampliarse si se agregan gastos, cambios de moneda o devolucio
 7. Las diferencias de rendicion deben quedar visibles.
 8. La decision inicial es una sola caja general, con posibilidad de evaluar cajas multiples mas adelante.
 9. Debe haber consulta por fecha y cierre de caja.
+10. Caja es la seccion unificada para cobros, pagos, entregas de dinero a repartidores, rendiciones, diferencias, ajustes y cierres.
+11. No hay pestañas principales separadas para Pagos o Rendiciones en la organizacion inicial.
 
 ## Decisiones pendientes
 

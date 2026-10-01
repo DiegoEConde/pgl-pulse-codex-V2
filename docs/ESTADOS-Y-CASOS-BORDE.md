@@ -5,6 +5,8 @@ Fecha: 2026-09-29
 
 Este documento registra las reglas finas definidas antes de disenar la base de datos v2.
 
+La organizacion funcional aprobada para la interfaz inicial es Inicio, Compras, Ventas, Stock, Reparto, Caja, Datos y Reportes. Esta organizacion concentra lo financiero en Caja, deja los comprobantes dentro de Ventas y evita una pestaña separada de Repartidores.
+
 ## Roles y accesos
 
 PGL Pulse v2 contempla tres roles:
@@ -25,7 +27,7 @@ Puede operar ventas, compras, stock, clientes, proveedores y tareas comerciales,
 
 Rol temporal pendiente de aprobacion final del cliente.
 
-Tendra una pantalla especial y limitada donde podra ver:
+Tendra una vista especial o filtrada dentro de Reparto donde podra ver:
 
 - proveedores a visitar;
 - productos que debe retirar en cada proveedor;
@@ -50,6 +52,16 @@ La caja debe soportar:
 - debito.
 
 La caja debe poder consultarse por fecha y tambien admitir cierre de caja.
+
+Caja es la unica seccion principal para:
+
+- cobros de clientes;
+- pagos a proveedores;
+- entregas de dinero a repartidores;
+- rendiciones;
+- diferencias;
+- ajustes;
+- cierres de caja.
 
 ### Cajas multiples: beneficio futuro
 
@@ -136,7 +148,9 @@ Si hay error, el comprobante se puede editar. Si se elimina un producto y se agr
 
 Esta regla exige auditoria posterior, porque una edicion de comprobante afecta ventas y stock.
 
-## Rutas y repartidores
+Los comprobantes se generan, consultan, descargan, envian y reimprimen desde el detalle/modal de la venta. No existe una pestaña principal de Comprobantes en la organizacion inicial.
+
+## Reparto, rutas y repartidores
 
 Una ruta puede armarse antes de salir y tambien puede recibir paradas nuevas mientras el repartidor esta en la calle.
 
@@ -155,9 +169,11 @@ No se registran gastos del repartidor como nafta, peaje o estacionamiento.
 
 Si existe costo de envio, se maneja como una caracteristica del repartidor. Ese costo puede modificarse en su perfil y aplica solo hacia adelante, nunca retroactivamente.
 
+Los perfiles de repartidores se administran en Datos como usuarios con rol `REPARTIDOR`. La operacion diaria del repartidor se ve en Reparto.
+
 ## Rendicion
 
-El repartidor rinde a alguien del local.
+El repartidor rinde a alguien del local. La carga y cierre de rendicion se operan desde Caja, vinculadas a la ruta.
 
 Si la rendicion queda para el dia siguiente, la caja/ruta queda abierta.
 

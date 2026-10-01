@@ -23,6 +23,21 @@ Decision actual: por ahora no se usara Supabase. Todo el desarrollo de datos ser
 10. Los cambios sensibles van a historial_eventos.
 11. No se cargan datos reales ni datos beta hasta que los flujos funcionen localmente.
 
+## Organizacion funcional inicial
+
+La base distingue entidades aunque la interfaz las agrupe. La organizacion inicial de pantallas es:
+
+- Inicio;
+- Compras;
+- Ventas;
+- Stock;
+- Reparto;
+- Caja;
+- Datos;
+- Reportes.
+
+Pagos, cobros, entregas de dinero a repartidores, rendiciones, diferencias, ajustes y cierres se operan desde Caja y se guardan en `movimientos_dinero`. Comprobantes se operan desde Ventas y se guardan como numero, estado y snapshot dentro de `ventas`. Repartidores se administran como usuarios en `usuarios` y se asignan desde Reparto.
+
 ## Tipos comunes
 
 Estos nombres funcionan como tipos logicos del contrato. En la base local JSON se guardan como strings, numeros, booleanos u objetos JSON segun corresponda; no implican usar PostgreSQL ni Supabase.
@@ -254,7 +269,7 @@ Campos clave:
 
 ### `movimientos_dinero`
 
-Registro unico de dinero. Existe para que finanzas sea la fuente real de caja, cobros, pagos, rendiciones, diferencias, deudas y cierres.
+Registro unico de dinero. Existe para que Caja sea la fuente real de cobros, pagos, rendiciones, diferencias, deudas y cierres.
 
 Campos clave:
 
