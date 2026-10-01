@@ -23,8 +23,9 @@ import {
 } from "lucide-react";
 import Logo from "@/components/core/Logo/Logo";
 import Navigation from "@/components/core/Navigation/Navigation";
+import MastersScreen from "@/components/features/masters/MastersScreen";
 import { useApp } from "@/contexts/AppContext";
-import type { LocalDbStatus } from "@/lib/local-db";
+import type { LocalDbStatus, MasterData } from "@/lib/local-db";
 import type { PageId } from "@/types/navigation";
 import styles from "./PulseMockup.module.css";
 
@@ -81,6 +82,7 @@ type MockupPage = {
 
 type PulseMockupProps = {
   localDbStatus?: LocalDbStatus;
+  masterData?: MasterData;
 };
 
 const toneClass = {
@@ -431,7 +433,7 @@ const pages: Record<MockupPageId, MockupPage> = {
   },
 };
 
-export default function PulseMockup({ localDbStatus }: PulseMockupProps) {
+export default function PulseMockup({ localDbStatus, masterData }: PulseMockupProps) {
   const { currentPage } = useApp();
   const [menuOpen, setMenuOpen] = useState(false);
   const page = pages[currentPage] ?? pages.inicio;
@@ -458,7 +460,7 @@ export default function PulseMockup({ localDbStatus }: PulseMockupProps) {
       </header>
 
       <main className={`workspace program-workspace ${styles.workspace}`}>
-        <section className={`view ${styles.page}`}>
+        {currentPage === "datos" ? <MastersScreen initialData={masterData ?? { productos: [], clientes: [], proveedores: [] }} /> : <section className={`view ${styles.page}`}>
           <header className={styles.hero}>
             <div>
               <span className="eyebrow">{page.eyebrow}</span>
@@ -520,7 +522,7 @@ export default function PulseMockup({ localDbStatus }: PulseMockupProps) {
               </div>
             </aside>
           </div>
-        </section>
+        </section>}
       </main>
     </div>
   );

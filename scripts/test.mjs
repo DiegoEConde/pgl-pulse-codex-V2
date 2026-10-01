@@ -5,6 +5,7 @@ import { projectRoot } from "./local-db-utils.mjs";
 const testScripts = [
   "test-local-db.mjs",
   "test-local-data-layer.mjs",
+  "test-masters.mjs",
 ];
 
 for (const script of testScripts) {

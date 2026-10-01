@@ -9,6 +9,7 @@ Sprint 2 conecta el frontend con el modelo v2 sin reescribir la estetica. La app
 
 - `lib/local-db/schema.ts`: tipos, enums y nombres oficiales de las 13 tablas v2.
 - `lib/local-db/client.ts`: cliente local server-side para leer, escribir, insertar, actualizar, borrar y manejar secuencias.
+- `lib/local-db/masters.ts`: operaciones de productos, clientes y proveedores agregadas en Sprint 3.
 - `lib/local-db/index.ts`: punto de entrada de la capa local.
 - `scripts/test-local-data-layer.mjs`: prueba tecnica de lectura/escritura contra un JSON temporal.
 - `scripts/test.mjs`: ejecuta las pruebas de base local y capa local.

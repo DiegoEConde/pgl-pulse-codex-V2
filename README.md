@@ -29,6 +29,7 @@ Base local Sprint 1:
 
 - `docs/LOCAL-DB.md`
 - `docs/DATA-LAYER.md`
+- `docs/SPRINT-3-DATOS.md`
 - `data/pgl-pulse-v2.local.example.json`
 - `.env.local.example`
 
