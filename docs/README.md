@@ -19,6 +19,7 @@ La organizacion inicial aprobada de pantallas es: Inicio, Compras, Ventas, Stock
 9. `LOCAL-DB.md`: base local JSON, scripts y validaciones del Sprint 1.
 10. `DATA-LAYER.md`: cliente local, tipos y pruebas de lectura/escritura del Sprint 2.
 11. `SPRINT-3-DATOS.md`: implementacion funcional de productos, clientes y proveedores.
+12. `SPRINT-4-COMPRAS.md`: implementacion funcional de compras y pedidos a proveedor.
 
 ## Entregables de revision
 
@@ -28,6 +29,7 @@ La organizacion inicial aprobada de pantallas es: Inicio, Compras, Ventas, Stock
 - `data/pgl-pulse-v2.local.example.json`: plantilla versionada de base local vacia.
 - `lib/local-db/*`: contrato tipado y cliente server-side para la base local.
 - `components/features/masters/*`: pantalla funcional de Datos para Sprint 3.
+- `components/features/purchases/PurchasesV2Screen.tsx`: pantalla funcional de Compras para Sprint 4.
 
 Si una implementacion entra en conflicto con estos documentos, se corrige la implementacion o se actualiza primero la regla oficial. No se inventan reglas desde el codigo.
 
