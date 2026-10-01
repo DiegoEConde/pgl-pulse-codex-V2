@@ -25,8 +25,9 @@ import Logo from "@/components/core/Logo/Logo";
 import Navigation from "@/components/core/Navigation/Navigation";
 import MastersScreen from "@/components/features/masters/MastersScreen";
 import PurchasesV2Screen from "@/components/features/purchases/PurchasesV2Screen";
+import SalesV2Screen from "@/components/features/sales/SalesV2Screen";
 import { useApp } from "@/contexts/AppContext";
-import type { LocalDbStatus, MasterData, PurchaseData } from "@/lib/local-db";
+import type { LocalDbStatus, MasterData, PurchaseData, SalesData } from "@/lib/local-db";
 import type { PageId } from "@/types/navigation";
 import styles from "./PulseMockup.module.css";
 
@@ -85,6 +86,7 @@ type PulseMockupProps = {
   localDbStatus?: LocalDbStatus;
   masterData?: MasterData;
   purchaseData?: PurchaseData;
+  salesData?: SalesData;
 };
 
 const toneClass = {
@@ -435,7 +437,7 @@ const pages: Record<MockupPageId, MockupPage> = {
   },
 };
 
-export default function PulseMockup({ localDbStatus, masterData, purchaseData }: PulseMockupProps) {
+export default function PulseMockup({ localDbStatus, masterData, purchaseData, salesData }: PulseMockupProps) {
   const { currentPage } = useApp();
   const [menuOpen, setMenuOpen] = useState(false);
   const page = pages[currentPage] ?? pages.inicio;
@@ -462,7 +464,9 @@ export default function PulseMockup({ localDbStatus, masterData, purchaseData }:
       </header>
 
       <main className={`workspace program-workspace ${styles.workspace}`}>
-        {currentPage === "compras" ? (
+        {currentPage === "ventas" ? (
+          <SalesV2Screen initialData={salesData ?? { ventas: [], venta_items: [], clientes: [], productos: [], vendedores: [], repartidores: [], unidades: [], compra_items: [], movimientos_dinero: [], rutas: [], ruta_items: [] }} />
+        ) : currentPage === "compras" ? (
           <PurchasesV2Screen initialData={purchaseData ?? { compras: [], compra_items: [], proveedores: [], productos: [], repartidores: [], ventas: [], venta_items: [], clientes: [], rutas: [], ruta_items: [] }} />
         ) : currentPage === "datos" ? (
           <MastersScreen initialData={masterData ?? { productos: [], clientes: [], proveedores: [] }} />

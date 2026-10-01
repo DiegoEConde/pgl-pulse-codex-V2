@@ -11,6 +11,7 @@ Sprint 2 conecta el frontend con el modelo v2 sin reescribir la estetica. La app
 - `lib/local-db/client.ts`: cliente local server-side para leer, escribir, insertar, actualizar, borrar y manejar secuencias.
 - `lib/local-db/masters.ts`: operaciones de productos, clientes y proveedores agregadas en Sprint 3.
 - `lib/local-db/purchases.ts`: operaciones de compras, items y rutas automaticas agregadas en Sprint 4.
+- `lib/local-db/sales.ts`: operaciones de ventas, cobros, comprobantes y rutas de entrega agregadas en Sprint 5.
 - `lib/local-db/index.ts`: punto de entrada de la capa local.
 - `scripts/test-local-data-layer.mjs`: prueba tecnica de lectura/escritura contra un JSON temporal.
 - `scripts/test.mjs`: ejecuta las pruebas de base local y capa local.
@@ -26,6 +27,9 @@ Sprint 2 conecta el frontend con el modelo v2 sin reescribir la estetica. La app
 - `deleteRow(tableName, id)`: elimina una fila por `id`.
 - `nextSequence(key)`: incrementa secuencias visibles como `ventas.numero`.
 - `getLocalDbStatus()`: devuelve estado, path, cantidad de tablas y cantidad de filas.
+- `createSale(values)`: crea venta, items, reservas, cobro inicial, ruta de envio y comprobante si corresponde.
+- `registerSalePayment(saleId, payment)`: registra un cobro real y actualiza saldos de venta e item.
+- `upsertReceipt(saleId)`: emite o reimprime el comprobante de la venta con snapshot historico.
 
 ## Aislamiento del modelo viejo
 

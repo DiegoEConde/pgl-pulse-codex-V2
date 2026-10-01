@@ -11,7 +11,7 @@ Este roadmap define como se va a construir PGL Pulse v2. La regla central es: pr
 2. Se reutiliza la estetica y gran parte del frontend de PGL Pulse actual.
 3. No se cargan datos reales hasta que los flujos principales funcionen localmente.
 4. Cada sprint debe cerrar una funcionalidad grande o una pestaña completa, no ajustes sueltos.
-5. Ningun sprint se considera terminado sin pruebas, commit y push al repositorio nuevo de GitHub.
+5. Ningun sprint se considera terminado sin pruebas y commit local.
 6. Si una regla de negocio cambia, se actualiza la documentacion antes o junto con el codigo.
 7. El autor de los commits debe figurar solo como DiegoEConde.
 
@@ -24,7 +24,7 @@ Para dar un sprint por terminado deben cumplirse estos puntos:
 3. Los cambios de base local estan versionados.
 4. Se ejecutaron las pruebas correspondientes.
 5. `git status` queda limpio despues del commit.
-6. Se hizo push al repositorio nuevo de GitHub.
+6. El push queda pendiente hasta pedido explicito del usuario.
 
 Pruebas minimas por tipo de sprint:
 
@@ -38,7 +38,7 @@ Pruebas minimas por tipo de sprint:
 | Caja | Prueba de saldos, pagos parciales, cierres, diferencias y deudas |
 | Reparto | Prueba de retiro, entrega, cobro, rendicion parcial y pendiente al dia siguiente |
 
-Nota: el repo v2 local ya tiene `origin` configurado. Cada sprint cerrado debe hacer push al repositorio nuevo de GitHub.
+Nota: el repo v2 local ya tiene `origin` configurado. Los sprints se commitean localmente y se pushean juntos cuando el usuario lo indique.
 
 ## Sprints
 
@@ -52,7 +52,7 @@ Entregables:
 - Roadmap documentado.
 - Documentacion enlazada desde README e indice de docs.
 - Repositorio local limpio.
-- Remoto GitHub creado o vinculado como `origin` antes del primer push obligatorio.
+- Remoto GitHub creado o vinculado como `origin` antes del primer push solicitado.
 
 Pruebas:
 
@@ -63,7 +63,7 @@ Pruebas:
 Cierre Git:
 
 - Commit sugerido: `docs: definir base simplificada y roadmap v2`.
-- Push requerido cuando exista `origin`.
+- Push pendiente hasta pedido explicito.
 
 ### Sprint 1 - Base local v2 y contrato inicial
 
@@ -102,7 +102,7 @@ Pruebas:
 Cierre Git:
 
 - Commit de base local JSON y configuracion local.
-- Push a GitHub.
+- Push pendiente hasta pedido explicito.
 
 ### Sprint 2 - Capa de datos y adaptacion tecnica
 
@@ -126,7 +126,7 @@ Pruebas:
 Cierre Git:
 
 - Commit de capa de datos.
-- Push a GitHub.
+- Push pendiente hasta pedido explicito.
 
 ### Sprint 3 - Catalogo, clientes y proveedores
 
@@ -150,7 +150,7 @@ Pruebas:
 Cierre Git:
 
 - Commit del modulo catalogos/terceros.
-- Push a GitHub.
+- Push pendiente hasta pedido explicito.
 
 ### Sprint 4 - Compras y pedidos a proveedor
 
@@ -177,7 +177,7 @@ Pruebas:
 Cierre Git:
 
 - Commit de compras.
-- Push a GitHub.
+- Push pendiente hasta pedido explicito.
 
 ### Sprint 5 - Ventas, detalle y comprobante
 
@@ -207,7 +207,7 @@ Pruebas:
 Cierre Git:
 
 - Commit de ventas y comprobantes.
-- Push a GitHub.
+- Push pendiente hasta pedido explicito.
 
 ### Sprint 6 - Unidades, stock, IMEI y estados
 
@@ -233,7 +233,7 @@ Pruebas:
 Cierre Git:
 
 - Commit de unidades/stock.
-- Push a GitHub.
+- Push pendiente hasta pedido explicito.
 
 ### Sprint 7 - Pestaña Reparto
 
@@ -264,7 +264,7 @@ Pruebas:
 Cierre Git:
 
 - Commit de reparto.
-- Push a GitHub.
+- Push pendiente hasta pedido explicito.
 
 ### Sprint 8 - Pestaña Caja
 
@@ -297,7 +297,7 @@ Pruebas:
 Cierre Git:
 
 - Commit de caja.
-- Push a GitHub.
+- Push pendiente hasta pedido explicito.
 
 ### Sprint 9 - Alertas, reportes y permisos
 
@@ -322,7 +322,7 @@ Pruebas:
 Cierre Git:
 
 - Commit de alertas/reportes/permisos.
-- Push a GitHub.
+- Push pendiente hasta pedido explicito.
 
 ### Sprint 10 - QA integral local
 
@@ -349,7 +349,7 @@ Pruebas:
 Cierre Git:
 
 - Commit de QA/correcciones finales locales.
-- Push a GitHub.
+- Push pendiente hasta pedido explicito.
 
 ### Sprint 11 - Publicacion futura opcional
 
@@ -375,5 +375,5 @@ Pruebas:
 Cierre Git:
 
 - Commit de configuracion nube si corresponde.
-- Push a GitHub.
+- Push pendiente hasta pedido explicito.
 - Tag sugerido: `v2-beta-real-1`.

@@ -7,6 +7,7 @@ const testScripts = [
   "test-local-data-layer.mjs",
   "test-masters.mjs",
   "test-purchases.mjs",
+  "test-sales.mjs",
 ];
 
 for (const script of testScripts) {

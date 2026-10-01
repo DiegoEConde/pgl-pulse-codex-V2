@@ -31,6 +31,7 @@ Base local Sprint 1:
 - `docs/DATA-LAYER.md`
 - `docs/SPRINT-3-DATOS.md`
 - `docs/SPRINT-4-COMPRAS.md`
+- `docs/SPRINT-5-VENTAS.md`
 - `data/pgl-pulse-v2.local.example.json`
 - `.env.local.example`
 
@@ -40,7 +41,7 @@ La estetica debe mantenerse alineada con PGL Pulse v1. Se espera reutilizar gran
 
 La base de datos local nueva es el punto de partida. Primero se define la estructura en JSON, despues se adapta el frontend y luego se prueban flujos completos en local. Cualquier migracion a nube queda fuera de esta etapa y requiere aprobacion explicita.
 
-Cada sprint cerrado debe tener pruebas, commit y push al repositorio nuevo de GitHub. El repo local v2 ya tiene remoto `origin` configurado.
+Cada sprint cerrado debe tener pruebas y commit local. No se hace push hasta que el usuario lo pida explicitamente; el repo local v2 ya tiene remoto `origin` configurado para ese momento.
 
 ## Ejecutar
 
