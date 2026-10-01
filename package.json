@@ -7,10 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "docs:pdf": "node scripts/generar-mockup-pestanas-pdf.mjs",
     "local-db:reset": "node scripts/reset-local-db.mjs",
     "local-db:validate": "node scripts/validate-local-db.mjs data/pgl-pulse-v2.local.example.json",
-    "test": "node scripts/test-local-db.mjs"
+    "test": "node scripts/test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",

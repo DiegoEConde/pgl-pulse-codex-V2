@@ -17,6 +17,7 @@ La organizacion inicial aprobada de pantallas es: Inicio, Compras, Ventas, Stock
 7. `BASE-DATOS.md`: modelo simplificado de tablas oficiales iniciales.
 8. `ROADMAP.md`: orden de trabajo por sprints, pruebas y politica de commit/push.
 9. `LOCAL-DB.md`: base local JSON, scripts y validaciones del Sprint 1.
+10. `DATA-LAYER.md`: cliente local, tipos y pruebas de lectura/escritura del Sprint 2.
 
 ## Entregables de revision
 
@@ -24,6 +25,7 @@ La organizacion inicial aprobada de pantallas es: Inicio, Compras, Ventas, Stock
 - `diagramas/base-datos-v2.mmd`: diagrama Mermaid editable.
 - `diagramas/base-datos-v2.svg`: diagrama visual exportable.
 - `data/pgl-pulse-v2.local.example.json`: plantilla versionada de base local vacia.
+- `lib/local-db/*`: contrato tipado y cliente server-side para la base local.
 
 Si una implementacion entra en conflicto con estos documentos, se corrige la implementacion o se actualiza primero la regla oficial. No se inventan reglas desde el codigo.
 

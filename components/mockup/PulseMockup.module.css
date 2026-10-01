@@ -21,6 +21,16 @@
   bottom: -12px;
 }
 
+.statusOk {
+  background: var(--green) !important;
+  box-shadow: 0 0 12px rgba(86, 214, 163, .7) !important;
+}
+
+.statusWarn {
+  background: var(--amber) !important;
+  box-shadow: 0 0 12px rgba(241, 189, 101, .62) !important;
+}
+
 .workspace {
   width: 100%;
 }

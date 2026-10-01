@@ -14,12 +14,14 @@ Sprint 1 deja definida la base local de PGL Pulse v2. No usa Supabase ni datos d
 - `scripts/reset-local-db.mjs`: crea la base local de trabajo desde la plantilla.
 - `scripts/validate-local-db.mjs`: valida un archivo local contra el contrato oficial.
 - `scripts/test-local-db.mjs`: prueba la base vacia y un fixture tecnico ficticio.
+- `lib/local-db/*`: cliente y tipos de la capa local agregados en Sprint 2.
 
 ## Comandos
 
 ```powershell
 npm run local-db:reset
 npm run local-db:validate
+npm run typecheck
 npm test
 ```
 
@@ -34,6 +36,7 @@ npm test
 - Unicidad logica y secuencias visibles.
 - Roles logicos de vendedor y repartidor.
 - Indices logicos declarados en `docs/base-datos-v2.json`.
+- Lectura/escritura tecnica de todas las tablas desde el cliente local.
 
 ## Politica de datos
 

@@ -28,6 +28,7 @@ Entregable de revision:
 Base local Sprint 1:
 
 - `docs/LOCAL-DB.md`
+- `docs/DATA-LAYER.md`
 - `data/pgl-pulse-v2.local.example.json`
 - `.env.local.example`
 
@@ -46,6 +47,7 @@ Base heredada del proyecto Next.js actual:
 ```powershell
 npm ci
 npm run local-db:reset
+npm run typecheck
 npm test
 npm run dev
 ```

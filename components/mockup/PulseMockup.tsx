@@ -24,6 +24,7 @@ import {
 import Logo from "@/components/core/Logo/Logo";
 import Navigation from "@/components/core/Navigation/Navigation";
 import { useApp } from "@/contexts/AppContext";
+import type { LocalDbStatus } from "@/lib/local-db";
 import type { PageId } from "@/types/navigation";
 import styles from "./PulseMockup.module.css";
 
@@ -76,6 +77,10 @@ type MockupPage = {
   sideTitle: string;
   sideMeta: string;
   sideItems: SideItem[];
+};
+
+type PulseMockupProps = {
+  localDbStatus?: LocalDbStatus;
 };
 
 const toneClass = {
@@ -426,10 +431,14 @@ const pages: Record<MockupPageId, MockupPage> = {
   },
 };
 
-export default function PulseMockup() {
+export default function PulseMockup({ localDbStatus }: PulseMockupProps) {
   const { currentPage } = useApp();
   const [menuOpen, setMenuOpen] = useState(false);
   const page = pages[currentPage] ?? pages.inicio;
+  const dbLabel = localDbStatus?.connected ? "Base local" : "Boceto v2";
+  const dbDetail = localDbStatus?.connected
+    ? `${localDbStatus.rowCount} registros / ${localDbStatus.tableCount} tablas`
+    : "Visual estatico";
 
   return (
     <div className="app-shell">
@@ -437,10 +446,10 @@ export default function PulseMockup() {
         <Logo />
         <Navigation open={menuOpen} onNavigate={() => setMenuOpen(false)} />
         <div className="system-state" aria-label="Estado del mockup">
-          <span />
+          <span className={localDbStatus?.connected ? styles.statusOk : styles.statusWarn} />
           <div>
-            <b>Boceto v2</b>
-            <small>Visual estatico</small>
+            <b>{dbLabel}</b>
+            <small>{dbDetail}</small>
           </div>
         </div>
         <button className="mobile-menu" onClick={() => setMenuOpen((value) => !value)} aria-label={menuOpen ? "Cerrar menu" : "Abrir menu"}>

@@ -1,0 +1,46 @@
+# Capa de datos local - Sprint 2
+
+Estado: implementacion tecnica inicial
+Fecha: 2026-10-01
+
+Sprint 2 conecta el frontend con el modelo v2 sin reescribir la estetica. La app sigue mostrando el mockup visual, pero la pagina inicial ya consulta el estado real de la base local JSON.
+
+## Archivos
+
+- `lib/local-db/schema.ts`: tipos, enums y nombres oficiales de las 13 tablas v2.
+- `lib/local-db/client.ts`: cliente local server-side para leer, escribir, insertar, actualizar, borrar y manejar secuencias.
+- `lib/local-db/index.ts`: punto de entrada de la capa local.
+- `scripts/test-local-data-layer.mjs`: prueba tecnica de lectura/escritura contra un JSON temporal.
+- `scripts/test.mjs`: ejecuta las pruebas de base local y capa local.
+
+## API disponible
+
+- `createLocalDbClient(options)`: crea un cliente apuntando a un archivo JSON.
+- `ensureLocalDb()`: lee la base local o la crea desde la plantilla si falta.
+- `listRows(tableName)`: lee filas de una tabla oficial.
+- `getRowById(tableName, id)`: busca una fila por `id`.
+- `insertRow(tableName, row)`: inserta una fila y genera `id` si no se envia.
+- `updateRow(tableName, id, changes)`: actualiza una fila existente.
+- `deleteRow(tableName, id)`: elimina una fila por `id`.
+- `nextSequence(key)`: incrementa secuencias visibles como `ventas.numero`.
+- `getLocalDbStatus()`: devuelve estado, path, cantidad de tablas y cantidad de filas.
+
+## Aislamiento del modelo viejo
+
+La ruta activa `app/page.tsx` usa `lib/local-db` y no consulta Supabase. Los archivos heredados en `lib/supabase/*` quedan como stubs deshabilitados para que las pantallas viejas no ejecuten operaciones reales mientras se adaptan en sprints posteriores.
+
+## Pruebas
+
+```powershell
+npm run typecheck
+npm test
+npm run build
+```
+
+`npm test` compila la capa local en `tests/artifacts/compiled-local-db`, crea un JSON temporal, inserta fixtures tecnicos en todas las tablas, lee cada tabla por lista e id, actualiza una venta y valida el resultado contra `docs/base-datos-v2.json`.
+
+## Restricciones
+
+- No se cargan datos reales.
+- No se migran datos de v1/beta.
+- El cliente local usa `fs`, por lo tanto debe usarse del lado server o desde scripts Node.

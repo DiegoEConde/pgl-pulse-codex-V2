@@ -9,5 +9,5 @@ export default defineConfig([
     files: ["tests/**/*.cjs"],
     rules: { "@typescript-eslint/no-require-imports": "off" },
   },
-  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+  globalIgnores([".next/**", "out/**", "build/**", "tests/artifacts/**", "next-env.d.ts"]),
 ]);
