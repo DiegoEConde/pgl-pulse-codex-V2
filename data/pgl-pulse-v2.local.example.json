@@ -3,14 +3,54 @@
     "schema": "pgl_pulse_v2",
     "version": "0.1.0",
     "mode": "local-json",
-    "createdAt": "2026-09-29",
-    "updatedAt": "2026-09-29",
+    "createdAt": "2026-10-01",
+    "updatedAt": "2026-10-01",
     "sourceContract": "docs/base-datos-v2.json",
     "realDataAllowed": false,
+    "seedPolicy": {
+      "realData": "prohibido hasta aprobacion explicita del usuario",
+      "v1BetaData": "no migrar automaticamente",
+      "technicalFixtures": "permitidas solo para pruebas locales controladas"
+    },
     "notes": [
       "Archivo ejemplo para desarrollo local.",
       "No cargar datos reales hasta que los flujos principales funcionen y el usuario lo apruebe.",
+      "No migrar automaticamente datos de v1/beta.",
       "Copiar a data/pgl-pulse-v2.local.json para usarlo como base local de trabajo."
+    ]
+  },
+  "contract": {
+    "source": "docs/base-datos-v2.json",
+    "version": "0.1.0",
+    "tables": [
+      "usuarios",
+      "clientes",
+      "proveedores",
+      "productos",
+      "compras",
+      "compra_items",
+      "ventas",
+      "venta_items",
+      "unidades",
+      "rutas",
+      "ruta_items",
+      "movimientos_dinero",
+      "historial_eventos"
+    ],
+    "sequenceKeys": [
+      "compras.numero",
+      "ventas.numero",
+      "ventas.comprobante_numero"
+    ],
+    "logicalIndexesSource": "docs/base-datos-v2.json tables.*.indexes",
+    "validation": [
+      "tablas oficiales presentes y sin tablas extra",
+      "claves primarias y campos obligatorios",
+      "enums de estados basicos",
+      "referencias entre tablas",
+      "unicidad logica y secuencias",
+      "roles logicos de vendedores y repartidores",
+      "indices logicos definidos en el contrato"
     ]
   },
   "sequences": {

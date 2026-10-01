@@ -16,12 +16,14 @@ La organizacion inicial aprobada de pantallas es: Inicio, Compras, Ventas, Stock
 6. `ESTADOS.md`: boceto de estados persistentes y derivados.
 7. `BASE-DATOS.md`: modelo simplificado de tablas oficiales iniciales.
 8. `ROADMAP.md`: orden de trabajo por sprints, pruebas y politica de commit/push.
+9. `LOCAL-DB.md`: base local JSON, scripts y validaciones del Sprint 1.
 
 ## Entregables de revision
 
 - `PGL-Pulse-v2-mockup-pestanas.pdf`: PDF de revision del mockup aprobado y sus pestañas.
 - `diagramas/base-datos-v2.mmd`: diagrama Mermaid editable.
 - `diagramas/base-datos-v2.svg`: diagrama visual exportable.
+- `data/pgl-pulse-v2.local.example.json`: plantilla versionada de base local vacia.
 
 Si una implementacion entra en conflicto con estos documentos, se corrige la implementacion o se actualiza primero la regla oficial. No se inventan reglas desde el codigo.
 

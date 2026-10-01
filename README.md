@@ -25,6 +25,12 @@ Entregable de revision:
 
 - `docs/PGL-Pulse-v2-mockup-pestanas.pdf`
 
+Base local Sprint 1:
+
+- `docs/LOCAL-DB.md`
+- `data/pgl-pulse-v2.local.example.json`
+- `.env.local.example`
+
 ## Principio de trabajo
 
 La estetica debe mantenerse alineada con PGL Pulse v1. Se espera reutilizar gran parte del frontend existente, pero no se debe forzar el nuevo negocio dentro del modelo viejo de base de datos.
@@ -35,12 +41,12 @@ Cada sprint cerrado debe tener pruebas, commit y push al repositorio nuevo de Gi
 
 ## Ejecutar
 
-Pendiente de ajustar cuando la app lea y escriba la base local JSON.
-
 Base heredada del proyecto Next.js actual:
 
 ```powershell
 npm ci
+npm run local-db:reset
+npm test
 npm run dev
 ```
 

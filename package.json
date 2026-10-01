@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "docs:pdf": "node scripts/generar-mockup-pestanas-pdf.mjs",
-    "test": "node -e \"console.log('Pendiente: definir pruebas v2')\""
+    "local-db:reset": "node scripts/reset-local-db.mjs",
+    "local-db:validate": "node scripts/validate-local-db.mjs data/pgl-pulse-v2.local.example.json",
+    "test": "node scripts/test-local-db.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
