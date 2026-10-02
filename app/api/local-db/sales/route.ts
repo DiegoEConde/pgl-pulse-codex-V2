@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createSale, emptySalesData, listSalesData, registerSalePayment, upsertReceipt } from "@/lib/local-db";
+import { cancelSaleItem, createSale, emptySalesData, listSalesData, registerSalePayment, upsertReceipt } from "@/lib/local-db";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +20,10 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
+    if (body.action === "cancel-item" && typeof body.itemId === "string") {
+      return NextResponse.json({ data: await cancelSaleItem(body.itemId) });
+    }
+
     const saleId = typeof body.saleId === "string" ? body.saleId : "";
     if (!saleId) throw new Error("Venta obligatoria.");
 

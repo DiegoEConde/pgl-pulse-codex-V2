@@ -12,6 +12,7 @@ const testScripts = [
   "test-delivery.mjs",
   "test-cash.mjs",
   "test-insights.mjs",
+  "test-qa-integral.mjs",
 ];
 
 for (const script of testScripts) {

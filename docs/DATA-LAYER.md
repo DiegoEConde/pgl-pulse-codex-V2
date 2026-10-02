@@ -35,6 +35,7 @@ Sprint 2 conecta el frontend con el modelo v2 sin reescribir la estetica. La app
 - `createSale(values)`: crea venta, items, reservas, cobro inicial, ruta de envio y comprobante si corresponde.
 - `registerSalePayment(saleId, payment)`: registra un cobro real y actualiza saldos de venta e item.
 - `upsertReceipt(saleId)`: emite o reimprime el comprobante de la venta con snapshot historico.
+- `cancelSaleItem(itemId)`: cancela un item vendido antes de entrega y sin pagos aplicados, libera unidad/compra/ruta y ajusta venta/comprobante.
 - `receivePurchaseItem(values)`: crea una unidad desde un item de compra y actualiza compra/venta segun destino.
 - `updateUnitIdentity(unitId, values)`: edita IMEI, serie, color o identificador mientras la unidad no este finalizada.
 - `deliverUnit(unitId)`: marca entregada la venta asociada sin permitir entrega parcial.
@@ -67,7 +68,7 @@ npm test
 npm run build
 ```
 
-`npm test` compila la capa local en `tests/artifacts/compiled-local-db`, crea un JSON temporal, inserta fixtures tecnicos en todas las tablas, lee cada tabla por lista e id, actualiza una venta y valida el resultado contra `docs/base-datos-v2.json`.
+`npm test` compila la capa local en `tests/artifacts/compiled-local-db`, crea JSON temporales, inserta fixtures tecnicos, valida cada modulo y ejecuta `scripts/test-qa-integral.mjs` para cubrir los flujos end-to-end del Sprint 10 contra `docs/base-datos-v2.json`.
 
 ## Restricciones
 

@@ -241,6 +241,91 @@ export async function registerSalePayment(saleId: UUID, payment: SalePaymentInpu
   return listSalesData(options);
 }
 
+export async function cancelSaleItem(itemId: UUID, options: LocalDbClientOptions = {}) {
+  const db = createLocalDbClient(options);
+  const saleItem = await db.getRowById("venta_items", requiredId(itemId, "Item de venta"));
+  if (!saleItem) throw new Error("Item de venta inexistente.");
+  if (saleItem.estado === "CANCELADO") return listSalesData(options);
+  if (saleItem.estado === "ENTREGADO" || saleItem.estado === "FINALIZADO" || saleItem.estado === "GARANTIA") {
+    throw new Error("No se puede cancelar un item de venta entregado, finalizado o en garantia.");
+  }
+  if (saleItem.saldo_pendiente < saleItem.precio_venta) {
+    throw new Error("No se puede cancelar un item de venta con pagos aplicados.");
+  }
+
+  const sale = await requireSale(saleItem.venta_id, options);
+  if (sale.estado === "FINALIZADA") throw new Error("No se puede cancelar un item de una venta finalizada.");
+
+  const movements = (await db.listRows("movimientos_dinero")).filter((movement) => (
+    movement.estado !== "ANULADO"
+    && movement.tipo === "COBRO_CLIENTE"
+    && movement.venta_id === sale.id
+  ));
+  if (movements.some((movement) => !movement.venta_item_id)) {
+    throw new Error("No se puede cancelar el item porque la venta tiene pagos sin item especifico.");
+  }
+
+  if (saleItem.unidad_id) {
+    const unit = await db.getRowById("unidades", saleItem.unidad_id);
+    if (unit && (unit.estado === "ENTREGADA" || unit.estado === "FINALIZADA" || unit.estado === "GARANTIA" || unit.estado === "CANCELADA")) {
+      throw new Error("No se puede cancelar un item con una unidad entregada, finalizada, cancelada o en garantia.");
+    }
+  }
+
+  const now = new Date().toISOString();
+  await db.updateRow("venta_items", saleItem.id, {
+    estado: "CANCELADO",
+    saldo_pendiente: 0,
+    actualizado_por: null,
+  });
+
+  if (saleItem.unidad_id) {
+    await db.updateRow("unidades", saleItem.unidad_id, {
+      estado: "EN_OFICINA_DISPONIBLE",
+      venta_item_id: null,
+      ubicacion_tipo: "OFICINA",
+      ubicacion_usuario_id: null,
+      ubicacion_cliente_id: null,
+      actualizado_por: null,
+    });
+  }
+
+  if (saleItem.compra_item_id) {
+    await db.updateRow("compra_items", saleItem.compra_item_id, {
+      venta_item_id: null,
+      actualizado_por: null,
+    });
+  }
+
+  await cancelOpenRouteItemsForSaleItem(sale, saleItem, now, options);
+
+  const currentItems = await db.listRows("venta_items");
+  const activeItems = currentItems.filter((item) => item.venta_id === sale.id && item.estado !== "CANCELADO");
+  const nextTotal = roundMoney(activeItems.reduce((sum, item) => sum + item.precio_venta, 0));
+  const nextSaldo = roundMoney(activeItems.reduce((sum, item) => sum + item.saldo_pendiente, 0));
+  const nextState = activeItems.length ? sale.estado : "CANCELADA";
+
+  await db.updateRow("ventas", sale.id, {
+    estado: nextState,
+    total: nextTotal,
+    saldo_pendiente: nextSaldo,
+    ...buildReceiptCancellationPatch(sale, saleItem, nextState, nextTotal, nextSaldo, now),
+  });
+
+  await db.insertRow("historial_eventos", {
+    entidad: "venta_items",
+    entidad_id: saleItem.id,
+    tipo: "ITEM_CANCELADO",
+    antes: { ...saleItem },
+    despues: { ...saleItem, estado: "CANCELADO", saldo_pendiente: 0 },
+    detalle: `Venta #${sale.numero}`,
+    usuario_id: null,
+    creado_en: now,
+  });
+
+  return listSalesData(options);
+}
+
 export async function upsertReceipt(
   saleId: UUID,
   { paidIfSettled = false }: { paidIfSettled?: boolean } = {},
@@ -277,6 +362,95 @@ export async function upsertReceipt(
   });
 
   return (await db.getRowById("ventas", sale.id))!;
+}
+
+async function cancelOpenRouteItemsForSaleItem(
+  sale: VentaRow,
+  saleItem: VentaItemRow,
+  now: string,
+  options: LocalDbClientOptions,
+) {
+  const db = createLocalDbClient(options);
+  const routeItems = await db.listRows("ruta_items");
+  const affectedRouteIds = new Set<UUID>();
+
+  for (const routeItem of routeItems.filter((item) => item.venta_item_id === saleItem.id && isOpenRouteItem(item))) {
+    await db.updateRow("ruta_items", routeItem.id, {
+      estado: "CANCELADA",
+      actualizado_en: now,
+      actualizado_por: null,
+    });
+    affectedRouteIds.add(routeItem.ruta_id);
+  }
+
+  for (const routeId of affectedRouteIds) {
+    const routeItemsForRoute = routeItems.filter((item) => item.ruta_id === routeId);
+    const hasOtherDelivery = routeItemsForRoute.some((item) => (
+      item.venta_item_id
+      && item.venta_item_id !== saleItem.id
+      && item.tipo === "ENTREGAR_CLIENTE"
+      && !isTerminalRouteItem(item)
+    ));
+
+    if (!hasOtherDelivery) {
+      for (const routeItem of routeItemsForRoute.filter((item) => item.tipo === "COBRAR_CLIENTE" && item.cliente_id === sale.cliente_id && isOpenRouteItem(item))) {
+        await db.updateRow("ruta_items", routeItem.id, {
+          estado: "CANCELADA",
+          actualizado_en: now,
+          actualizado_por: null,
+        });
+      }
+    }
+  }
+
+  await refreshCancelledRoutes([...affectedRouteIds], options);
+}
+
+async function refreshCancelledRoutes(routeIds: UUID[], options: LocalDbClientOptions) {
+  const db = createLocalDbClient(options);
+  const routeItems = await db.listRows("ruta_items");
+
+  for (const routeId of routeIds) {
+    const items = routeItems.filter((item) => item.ruta_id === routeId);
+    if (items.length && items.every((item) => item.estado === "CANCELADA" || item.estado === "OMITIDA")) {
+      await db.updateRow("rutas", routeId, {
+        estado: "CANCELADA",
+        cerrada_en: new Date().toISOString(),
+        actualizado_por: null,
+      });
+    }
+  }
+}
+
+function buildReceiptCancellationPatch(
+  sale: VentaRow,
+  saleItem: VentaItemRow,
+  nextState: VentaRow["estado"],
+  nextTotal: number,
+  nextSaldo: number,
+  now: string,
+) {
+  if (!sale.comprobante_numero) return {};
+  const status: ComprobanteEstado = nextState === "CANCELADA" ? "ANULADO" : "EDITADO";
+  return {
+    comprobante_estado: status,
+    comprobante_snapshot: {
+      ...sale.comprobante_snapshot,
+      estado: status,
+      editado_en: now,
+      total: nextTotal,
+      saldo_pendiente: nextSaldo,
+      item_cancelado_id: saleItem.id,
+    },
+  };
+}
+
+function isOpenRouteItem(item: RutaItemRow) {
+  return item.estado === "PENDIENTE" || item.estado === "ABIERTA";
+}
+
+function isTerminalRouteItem(item: RutaItemRow) {
+  return item.estado === "CONFIRMADA" || item.estado === "RENDIDA" || item.estado === "OMITIDA" || item.estado === "CANCELADA";
 }
 
 async function applyPaymentToBalances(

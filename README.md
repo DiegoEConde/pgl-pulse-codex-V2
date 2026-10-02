@@ -36,6 +36,7 @@ Base local Sprint 1:
 - `docs/SPRINT-7-REPARTO.md`
 - `docs/SPRINT-8-CAJA.md`
 - `docs/SPRINT-9-ALERTAS-REPORTES-PERMISOS.md`
+- `docs/SPRINT-10-QA-INTEGRAL-LOCAL.md`
 - `data/pgl-pulse-v2.local.example.json`
 - `.env.local.example`
 
