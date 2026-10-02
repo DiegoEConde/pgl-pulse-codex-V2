@@ -12,6 +12,7 @@ import {
   ClipboardCheck,
   ClipboardList,
   CreditCard,
+  LogOut,
   Menu,
   PackageSearch,
   Search,
@@ -33,8 +34,10 @@ import PurchasesV2Screen from "@/components/features/purchases/PurchasesV2Screen
 import SalesV2Screen from "@/components/features/sales/SalesV2Screen";
 import StockV2Screen from "@/components/features/stock/StockV2Screen";
 import { useApp } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { roleDisplayName } from "@/lib/demo-users";
 import { getRoleAccess, resolvePageForRole } from "@/lib/permissions";
-import type { CashData, DeliveryData, InsightsData, LocalDbStatus, MasterData, PurchaseData, RolUsuario, SalesData, StockData, UUID } from "@/lib/local-db";
+import type { CashData, DeliveryData, InsightsData, LocalDbStatus, MasterData, PurchaseData, RolUsuario, SalesData, StockData } from "@/lib/local-db";
 import type { PageId } from "@/types/navigation";
 import styles from "./PulseMockup.module.css";
 
@@ -450,9 +453,11 @@ const pages: Record<MockupPageId, MockupPage> = {
 
 export default function PulseMockup({ localDbStatus, masterData, purchaseData, salesData, stockData, deliveryData, cashData, insightsData }: PulseMockupProps) {
   const { currentPage } = useApp();
+  const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSubject, setActiveSubject] = useState("role:ADMINISTRADOR");
-  const { activeRole, activeUserId, activeUserName } = resolveActiveSubject(activeSubject, insightsData);
+  const activeRole = user?.rol ?? "ADMINISTRADOR";
+  const activeUserId = user?.id ?? null;
+  const activeUserName = user?.nombre ?? roleLabel(activeRole);
   const access = getRoleAccess(activeRole);
   const visiblePage = resolvePageForRole(activeRole, currentPage) as MockupPageId;
   const allowedNavigation = navigationItems.filter((item) => access.allowedPages.includes(item.id));
@@ -468,17 +473,18 @@ export default function PulseMockup({ localDbStatus, masterData, purchaseData, s
       <header className={`topbar ${styles.topbar}`}>
         <Logo />
         <Navigation open={menuOpen} onNavigate={() => setMenuOpen(false)} items={allowedNavigation} activePage={visiblePage} />
-        <label className={styles.roleSwitch}>
-          <span>Usuario</span>
-          <select value={activeSubject} onChange={(event) => setActiveSubject(event.target.value)}>
-            {roleOptions(insightsData).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-          </select>
-        </label>
+        <div className={styles.sessionBox}>
+          <span>{roleDisplayName(activeRole)}</span>
+          <strong>{activeUserName}</strong>
+          <button type="button" onClick={logout} aria-label="Cerrar sesion">
+            <LogOut size={15} />
+          </button>
+        </div>
         <div className="system-state" aria-label="Estado del mockup">
           <span className={localDbStatus?.connected ? styles.statusOk : styles.statusWarn} />
           <div>
             <b>{dbLabel}</b>
-            <small>{activeUserName} / {dbDetail}</small>
+            <small>{dbDetail}</small>
           </div>
         </div>
         <button className="mobile-menu" onClick={() => setMenuOpen((value) => !value)} aria-label={menuOpen ? "Cerrar menu" : "Abrir menu"}>
@@ -593,36 +599,6 @@ function PanelHead({ title, badge }: { title: string; badge: string }) {
       </div>
     </header>
   );
-}
-
-function roleOptions(data?: InsightsData) {
-  const users = data?.usuarios ?? [];
-  const userOptions = users.map((user) => ({
-    value: `user:${user.id}`,
-    label: `${user.nombre} (${roleLabel(user.rol)})`,
-  }));
-
-  return [
-    ...userOptions,
-    { value: "role:ADMINISTRADOR", label: "Administrador" },
-    { value: "role:VENDEDOR", label: "Vendedor" },
-    { value: "role:REPARTIDOR", label: "Repartidor" },
-  ];
-}
-
-function resolveActiveSubject(subject: string, data?: InsightsData): { activeRole: RolUsuario; activeUserId: UUID | null; activeUserName: string } {
-  if (subject.startsWith("user:")) {
-    const userId = subject.replace("user:", "");
-    const user = data?.usuarios.find((current) => current.id === userId);
-    if (user) return { activeRole: user.rol, activeUserId: user.id, activeUserName: user.nombre };
-  }
-
-  const role = subject.replace("role:", "");
-  if (role === "VENDEDOR" || role === "REPARTIDOR" || role === "ADMINISTRADOR") {
-    return { activeRole: role, activeUserId: null, activeUserName: roleLabel(role) };
-  }
-
-  return { activeRole: "ADMINISTRADOR", activeUserId: null, activeUserName: "Administrador" };
 }
 
 function createEmptyInsightsData(): InsightsData {

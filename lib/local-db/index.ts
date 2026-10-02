@@ -7,3 +7,4 @@ export * from "./stock";
 export * from "./delivery";
 export * from "./cash";
 export * from "./insights";
+export * from "./demo-users";
