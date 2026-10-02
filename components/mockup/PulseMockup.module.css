@@ -2,7 +2,7 @@
   height: auto;
   min-height: 76px;
   row-gap: 8px;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
 }
 
 .topbar :global(.nav) {
@@ -33,6 +33,35 @@
 
 .workspace {
   width: 100%;
+}
+
+.metricsRestricted :global(.metric) {
+  display: none;
+}
+
+.roleSwitch {
+  display: grid;
+  gap: 4px;
+  min-width: 155px;
+  color: #a8b7c6;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.roleSwitch span {
+  padding-left: 2px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.roleSwitch select {
+  min-height: 38px;
+  padding: 0 10px;
+  color: #edf8ff;
+  background: rgba(5, 12, 20, .78);
+  border: 1px solid rgba(116, 151, 181, .28);
+  border-radius: 9px;
+  outline: none;
 }
 
 .page {
@@ -248,6 +277,11 @@
 
   .topbar :global(.nav-item.active)::after {
     bottom: -5px;
+  }
+
+  .roleSwitch {
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   .metrics,

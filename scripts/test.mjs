@@ -11,6 +11,7 @@ const testScripts = [
   "test-stock.mjs",
   "test-delivery.mjs",
   "test-cash.mjs",
+  "test-insights.mjs",
 ];
 
 for (const script of testScripts) {

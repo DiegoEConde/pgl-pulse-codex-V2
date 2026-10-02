@@ -1,8 +1,8 @@
 import PulseMockup from "@/components/mockup/PulseMockup";
-import { getLocalDbStatus, listCashData, listDeliveryData, listMasterData, listPurchaseData, listSalesData, listStockData } from "@/lib/local-db";
+import { getLocalDbStatus, listCashData, listDeliveryData, listInsightsData, listMasterData, listPurchaseData, listSalesData, listStockData } from "@/lib/local-db";
 
 export default async function HomePage() {
-  const [localDbStatus, masterData, purchaseData, salesData, stockData, deliveryData, cashData] = await Promise.all([
+  const [localDbStatus, masterData, purchaseData, salesData, stockData, deliveryData, cashData, insightsData] = await Promise.all([
     getLocalDbStatus(),
     listMasterData(),
     listPurchaseData(),
@@ -10,7 +10,8 @@ export default async function HomePage() {
     listStockData(),
     listDeliveryData(),
     listCashData(),
+    listInsightsData(),
   ]);
 
-  return <PulseMockup localDbStatus={localDbStatus} masterData={masterData} purchaseData={purchaseData} salesData={salesData} stockData={stockData} deliveryData={deliveryData} cashData={cashData} />;
+  return <PulseMockup localDbStatus={localDbStatus} masterData={masterData} purchaseData={purchaseData} salesData={salesData} stockData={stockData} deliveryData={deliveryData} cashData={cashData} insightsData={insightsData} />;
 }

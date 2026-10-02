@@ -2,11 +2,13 @@
 
 import { useMemo, useState, type CSSProperties, type FormEvent } from "react";
 import { ArrowDownToLine, CreditCard, PackageCheck, Plus, RefreshCw, Route, Save, Truck, Wallet, X } from "lucide-react";
-import type { DeliveryData, Moneda, RutaItemRow, RutaRow, UnitDestination, UUID } from "@/lib/local-db";
+import type { DeliveryData, Moneda, RolUsuario, RutaItemRow, RutaRow, UnitDestination, UUID } from "@/lib/local-db";
 import styles from "./DeliveryV2Screen.module.css";
 
 type DeliveryV2ScreenProps = {
   initialData: DeliveryData;
+  activeRole?: RolUsuario;
+  activeUserId?: UUID | null;
 };
 
 type RouteForm = {
@@ -34,7 +36,7 @@ const emptyData: DeliveryData = {
   movimientos_dinero: [],
 };
 
-export default function DeliveryV2Screen({ initialData }: DeliveryV2ScreenProps) {
+export default function DeliveryV2Screen({ initialData, activeRole = "ADMINISTRADOR", activeUserId = null }: DeliveryV2ScreenProps) {
   const [data, setData] = useState<DeliveryData>(initialData ?? emptyData);
   const [query, setQuery] = useState("");
   const [courierFilter, setCourierFilter] = useState("TODOS");
@@ -50,12 +52,13 @@ export default function DeliveryV2Screen({ initialData }: DeliveryV2ScreenProps)
 
   const maps = useMemo(() => buildMaps(data), [data]);
   const metrics = useMemo(() => buildMetrics(data), [data]);
-  const filteredRoutes = useMemo(() => filterRoutes(data, maps, query, courierFilter), [data, maps, query, courierFilter]);
+  const courierOnly = activeRole === "REPARTIDOR";
+  const filteredRoutes = useMemo(() => filterRoutes(data, maps, query, courierFilter, courierOnly, activeUserId), [activeUserId, courierFilter, courierOnly, data, maps, query]);
   const selectedRoute = filteredRoutes.find((route) => route.id === selectedRouteId) ?? filteredRoutes[0] ?? null;
   const selectedItems = selectedRoute ? data.ruta_items.filter((item) => item.ruta_id === selectedRoute.id).sort((a, b) => a.orden - b.orden) : [];
   const selectedTask = taskId ? data.ruta_items.find((item) => item.id === taskId) ?? null : null;
-  const pendingPurchaseItems = data.compra_items.filter((item) => item.estado !== "CANCELADO" && !item.unidad_id && !hasActiveTask(data, "compra_item_id", item.id, "RETIRAR_PROVEEDOR"));
-  const pendingSaleItems = data.venta_items.filter((item) => !["CANCELADO", "FINALIZADO", "GARANTIA", "ENTREGADO"].includes(item.estado) && !hasActiveTask(data, "venta_item_id", item.id, "ENTREGAR_CLIENTE"));
+  const pendingPurchaseItems = courierOnly ? [] : data.compra_items.filter((item) => item.estado !== "CANCELADO" && !item.unidad_id && !hasActiveTask(data, "compra_item_id", item.id, "RETIRAR_PROVEEDOR"));
+  const pendingSaleItems = courierOnly ? [] : data.venta_items.filter((item) => !["CANCELADO", "FINALIZADO", "GARANTIA", "ENTREGADO"].includes(item.estado) && !hasActiveTask(data, "venta_item_id", item.id, "ENTREGAR_CLIENTE"));
 
   async function refresh() {
     setSaving(true);
@@ -162,7 +165,7 @@ export default function DeliveryV2Screen({ initialData }: DeliveryV2ScreenProps)
           <button type="button" className={styles.iconButton} onClick={refresh} disabled={saving} aria-label="Actualizar">
             <RefreshCw size={18} />
           </button>
-          <button type="button" className={styles.primaryButton} onClick={() => setFormOpen(true)} disabled={!data.repartidores.length || (!pendingPurchaseItems.length && !pendingSaleItems.length)}>
+          <button type="button" className={styles.primaryButton} onClick={() => setFormOpen(true)} disabled={courierOnly || !data.repartidores.length || (!pendingPurchaseItems.length && !pendingSaleItems.length)}>
             <Plus size={18} />
             Nueva ruta
           </button>
@@ -190,14 +193,18 @@ export default function DeliveryV2Screen({ initialData }: DeliveryV2ScreenProps)
               <h2>Rutas activas</h2>
             </div>
             <div className={styles.filters}>
-              <button type="button" className={courierView ? styles.toggleOn : styles.toggle} onClick={() => setCourierView((value) => !value)}>
-                <Truck size={15} />
-                Repartidor
-              </button>
-              <select value={courierFilter} onChange={(event) => setCourierFilter(event.target.value)}>
-                <option value="TODOS">Todos</option>
-                {data.repartidores.map((courier) => <option key={courier.id} value={courier.id}>{courier.nombre}</option>)}
-              </select>
+              {!courierOnly && (
+                <>
+                  <button type="button" className={courierView ? styles.toggleOn : styles.toggle} onClick={() => setCourierView((value) => !value)}>
+                    <Truck size={15} />
+                    Repartidor
+                  </button>
+                  <select value={courierFilter} onChange={(event) => setCourierFilter(event.target.value)}>
+                    <option value="TODOS">Todos</option>
+                    {data.repartidores.map((courier) => <option key={courier.id} value={courier.id}>{courier.nombre}</option>)}
+                  </select>
+                </>
+              )}
               <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar ruta, repartidor o estado" />
             </div>
           </div>
@@ -265,10 +272,12 @@ export default function DeliveryV2Screen({ initialData }: DeliveryV2ScreenProps)
                   <Truck size={16} />
                   Sigue mañana
                 </button>
-                <button type="button" className={styles.iconTextButton} onClick={() => void sendPatch({ action: "partial-rendition", routeId: selectedRoute.id })} disabled={saving}>
-                  <Wallet size={16} />
-                  Rendición parcial
-                </button>
+                {!courierOnly && (
+                  <button type="button" className={styles.iconTextButton} onClick={() => void sendPatch({ action: "partial-rendition", routeId: selectedRoute.id })} disabled={saving}>
+                    <Wallet size={16} />
+                    Rendición parcial
+                  </button>
+                )}
               </div>
 
               <div className={styles.taskList}>
@@ -484,9 +493,11 @@ function buildMetrics(data: DeliveryData) {
   ];
 }
 
-function filterRoutes(data: DeliveryData, maps: ReturnType<typeof buildMaps>, query: string, courierFilter: string) {
+function filterRoutes(data: DeliveryData, maps: ReturnType<typeof buildMaps>, query: string, courierFilter: string, courierOnly: boolean, courierOnlyId: UUID | null) {
   const normalized = query.trim().toLowerCase();
   return data.rutas.filter((route) => {
+    if (courierOnly && !courierOnlyId) return false;
+    if (courierOnly && route.repartidor_id !== courierOnlyId) return false;
     const courier = maps.couriers.get(route.repartidor_id)?.nombre ?? "";
     const text = [route.id, courier, route.estado, route.observaciones].filter(Boolean).join(" ").toLowerCase();
     return (!normalized || text.includes(normalized)) && (courierFilter === "TODOS" || route.repartidor_id === courierFilter);
