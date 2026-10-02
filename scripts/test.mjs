@@ -10,6 +10,7 @@ const testScripts = [
   "test-sales.mjs",
   "test-stock.mjs",
   "test-delivery.mjs",
+  "test-cash.mjs",
 ];
 
 for (const script of testScripts) {

@@ -23,13 +23,14 @@ import {
 } from "lucide-react";
 import Logo from "@/components/core/Logo/Logo";
 import Navigation from "@/components/core/Navigation/Navigation";
+import CashV2Screen from "@/components/features/cash/CashV2Screen";
 import DeliveryV2Screen from "@/components/features/delivery/DeliveryV2Screen";
 import MastersScreen from "@/components/features/masters/MastersScreen";
 import PurchasesV2Screen from "@/components/features/purchases/PurchasesV2Screen";
 import SalesV2Screen from "@/components/features/sales/SalesV2Screen";
 import StockV2Screen from "@/components/features/stock/StockV2Screen";
 import { useApp } from "@/contexts/AppContext";
-import type { DeliveryData, LocalDbStatus, MasterData, PurchaseData, SalesData, StockData } from "@/lib/local-db";
+import type { CashData, DeliveryData, LocalDbStatus, MasterData, PurchaseData, SalesData, StockData } from "@/lib/local-db";
 import type { PageId } from "@/types/navigation";
 import styles from "./PulseMockup.module.css";
 
@@ -91,6 +92,7 @@ type PulseMockupProps = {
   salesData?: SalesData;
   stockData?: StockData;
   deliveryData?: DeliveryData;
+  cashData?: CashData;
 };
 
 const toneClass = {
@@ -441,7 +443,7 @@ const pages: Record<MockupPageId, MockupPage> = {
   },
 };
 
-export default function PulseMockup({ localDbStatus, masterData, purchaseData, salesData, stockData, deliveryData }: PulseMockupProps) {
+export default function PulseMockup({ localDbStatus, masterData, purchaseData, salesData, stockData, deliveryData, cashData }: PulseMockupProps) {
   const { currentPage } = useApp();
   const [menuOpen, setMenuOpen] = useState(false);
   const page = pages[currentPage] ?? pages.inicio;
@@ -474,6 +476,8 @@ export default function PulseMockup({ localDbStatus, masterData, purchaseData, s
           <StockV2Screen initialData={stockData ?? { unidades: [], productos: [], compras: [], compra_items: [], proveedores: [], ventas: [], venta_items: [], clientes: [], repartidores: [], rutas: [], ruta_items: [], historial_eventos: [] }} />
         ) : currentPage === "reparto" ? (
           <DeliveryV2Screen initialData={deliveryData ?? { rutas: [], ruta_items: [], repartidores: [], compras: [], compra_items: [], proveedores: [], ventas: [], venta_items: [], clientes: [], productos: [], unidades: [], movimientos_dinero: [] }} />
+        ) : currentPage === "caja" ? (
+          <CashV2Screen initialData={cashData ?? { movimientos_dinero: [], ventas: [], venta_items: [], clientes: [], compras: [], compra_items: [], proveedores: [], rutas: [], ruta_items: [], usuarios: [], repartidores: [], productos: [], saldos: { USD: 0, ARS: 0 }, deudas_clientes: [], deudas_proveedores: [], rendiciones: [], ultimo_cierre: null }} />
         ) : currentPage === "compras" ? (
           <PurchasesV2Screen initialData={purchaseData ?? { compras: [], compra_items: [], proveedores: [], productos: [], repartidores: [], ventas: [], venta_items: [], clientes: [], rutas: [], ruta_items: [] }} />
         ) : currentPage === "datos" ? (

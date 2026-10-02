@@ -413,6 +413,10 @@ export async function confirmCustomerCollection(routeItemId: UUID, input: RouteM
     moneda: payment.moneda,
     medio_pago: payment.medio_pago,
     venta_item_id: payment.venta_item_id,
+    usuario_id: payment.usuario_id ?? route.repartidor_id,
+    ruta_id: route.id,
+    ruta_item_id: routeItem.id,
+    observaciones: "Cobro a cliente en ruta",
   }, options);
 
   const updatedSale = await requireSale(sale.id, options);

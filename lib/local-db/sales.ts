@@ -30,6 +30,10 @@ export type SalePaymentInput = {
   medio_pago: MedioPago;
   venta_item_id?: UUID | null;
   line_index?: number | null;
+  usuario_id?: UUID | null;
+  ruta_id?: UUID | null;
+  ruta_item_id?: UUID | null;
+  observaciones?: string | null;
 };
 
 export type CreateSaleInput = {
@@ -224,7 +228,7 @@ export async function registerSalePayment(saleId: UUID, payment: SalePaymentInpu
     sale,
     saleItem: targetItem,
     payment: normalized,
-    usuarioId: sale.vendedor_id,
+    usuarioId: normalized.usuario_id ?? sale.vendedor_id,
     options,
   });
 
@@ -409,8 +413,8 @@ async function createSalePaymentMovement({
     venta_item_id: saleItem?.id ?? null,
     compra_id: null,
     compra_item_id: null,
-    ruta_id: null,
-    ruta_item_id: null,
+    ruta_id: payment.ruta_id ?? null,
+    ruta_item_id: payment.ruta_item_id ?? null,
     cliente_id: sale.cliente_id,
     proveedor_id: null,
     usuario_id: usuarioId,
@@ -421,7 +425,7 @@ async function createSalePaymentMovement({
       saldo_anterior: sale.saldo_pendiente,
       saldo_posterior: Math.max(0, roundMoney(sale.saldo_pendiente - payment.importe)),
     },
-    observaciones: saleItem ? "Pago aplicado a item de venta" : "Pago aplicado a venta",
+    observaciones: payment.observaciones ?? (saleItem ? "Pago aplicado a item de venta" : "Pago aplicado a venta"),
     creado_en: now,
     actualizado_en: now,
     creado_por: usuarioId,
@@ -527,6 +531,10 @@ function normalizePayment(input: SalePaymentInput): SalePaymentInput {
     medio_pago: normalizePaymentMethod(input.medio_pago, input.moneda),
     venta_item_id: input.venta_item_id || null,
     line_index: input.line_index ?? null,
+    usuario_id: input.usuario_id || null,
+    ruta_id: input.ruta_id || null,
+    ruta_item_id: input.ruta_item_id || null,
+    observaciones: optionalText(input.observaciones),
   };
 }
 

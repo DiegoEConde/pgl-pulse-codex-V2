@@ -14,6 +14,7 @@ Sprint 2 conecta el frontend con el modelo v2 sin reescribir la estetica. La app
 - `lib/local-db/sales.ts`: operaciones de ventas, cobros, comprobantes y rutas de entrega agregadas en Sprint 5.
 - `lib/local-db/stock.ts`: operaciones de unidades, IMEI, recepcion, entrega, finalizacion y garantia agregadas en Sprint 6.
 - `lib/local-db/delivery.ts`: operaciones de rutas, retiros, pagos, entregas y cobros agregadas en Sprint 7.
+- `lib/local-db/cash.ts`: operaciones de caja, deudas, rendiciones, diferencias y cierres agregadas en Sprint 8.
 - `lib/local-db/index.ts`: punto de entrada de la capa local.
 - `scripts/test-local-data-layer.mjs`: prueba tecnica de lectura/escritura contra un JSON temporal.
 - `scripts/test.mjs`: ejecuta las pruebas de base local y capa local.
@@ -42,6 +43,12 @@ Sprint 2 conecta el frontend con el modelo v2 sin reescribir la estetica. La app
 - `confirmProviderPayment(routeItemId, values)`: registra pago real a proveedor en ruta.
 - `confirmCustomerDelivery(routeItemId)`: confirma entrega a cliente sobre la unidad asociada.
 - `confirmCustomerCollection(routeItemId, values)`: registra cobro real a cliente y actualiza saldo de venta.
+- `registerCashSalePayment(saleId, values)`: registra cobro de cliente desde Caja y actualiza saldos.
+- `registerSupplierPayment(values)`: registra pago a proveedor desde Caja, con pago parcial por compra o item.
+- `registerCourierAdvance(values)`: registra entrega de dinero a repartidor.
+- `registerRouteRendition(values)`: registra rendicion de ruta y diferencias por moneda.
+- `registerCashAdjustment(values)`: registra ajuste manual de caja.
+- `closeCash(values)`: crea cierre de caja con snapshot y agrupa movimientos por `cierre_codigo`.
 
 ## Aislamiento del modelo viejo
 

@@ -23,6 +23,7 @@ La organizacion inicial aprobada de pantallas es: Inicio, Compras, Ventas, Stock
 13. `SPRINT-5-VENTAS.md`: implementacion funcional de ventas, cobros y comprobantes.
 14. `SPRINT-6-STOCK.md`: implementacion funcional de stock, unidades, IMEI y garantia.
 15. `SPRINT-7-REPARTO.md`: implementacion funcional de rutas, retiros, entregas y cobros en reparto.
+16. `SPRINT-8-CAJA.md`: implementacion funcional de caja, rendiciones, diferencias y cierres.
 
 ## Entregables de revision
 
@@ -36,6 +37,7 @@ La organizacion inicial aprobada de pantallas es: Inicio, Compras, Ventas, Stock
 - `components/features/sales/SalesV2Screen.tsx`: pantalla funcional de Ventas para Sprint 5.
 - `components/features/stock/StockV2Screen.tsx`: pantalla funcional de Stock para Sprint 6.
 - `components/features/delivery/DeliveryV2Screen.tsx`: pantalla funcional de Reparto para Sprint 7.
+- `components/features/cash/CashV2Screen.tsx`: pantalla funcional de Caja para Sprint 8.
 
 Si una implementacion entra en conflicto con estos documentos, se corrige la implementacion o se actualiza primero la regla oficial. No se inventan reglas desde el codigo.
 

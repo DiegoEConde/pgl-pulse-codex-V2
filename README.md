@@ -34,6 +34,7 @@ Base local Sprint 1:
 - `docs/SPRINT-5-VENTAS.md`
 - `docs/SPRINT-6-STOCK.md`
 - `docs/SPRINT-7-REPARTO.md`
+- `docs/SPRINT-8-CAJA.md`
 - `data/pgl-pulse-v2.local.example.json`
 - `.env.local.example`
 
